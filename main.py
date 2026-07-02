@@ -55,9 +55,10 @@ def sleeper_get(url: str):
 
 
 def bfs_leagues(user_ids: list[str]):
-    seen_users = set(user_ids)
-    seen_leagues = set()
-    good_drafts = set()
+    seen_leagues = load_ids("data/seen_leagues.txt")
+    good_drafts = load_ids("data/good_drafts.txt")
+    seen_users = load_ids("data/seen_users.txt") | set(user_ids)
+
     try:
         years = [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
         req_count = 0
@@ -65,13 +66,13 @@ def bfs_leagues(user_ids: list[str]):
         while q:
             last_user = q.pop()
             for year in years:
-                last_league = requests.get(
+                last_league = sleeper_get(
                     f"https://api.sleeper.app/v1/user/{last_user}/leagues/nfl/{year}",
                 )
                 req_count += 1
                 if req_count % 100 == 0:
                     save_seen_files(seen_leagues, good_drafts, seen_users)
-                for league in last_league.json():
+                for league in last_league:
                     league_id = league["league_id"]
                     if league_id in seen_leagues:
                         continue
@@ -79,11 +80,11 @@ def bfs_leagues(user_ids: list[str]):
                         good_drafts.add(league["draft_id"])
                     seen_leagues.add(league_id)
                     print(league_id)
-                    users = requests.get(
+                    users = sleeper_get(
                         f"https://api.sleeper.app/v1/league/{league_id}/users"
                     )
                     req_count += 1
-                    for user in users.json():
+                    for user in users:
                         user_id = user["user_id"]
                         if user_id in seen_users:
                             continue
@@ -93,22 +94,34 @@ def bfs_leagues(user_ids: list[str]):
         save_seen_files(seen_leagues, good_drafts, seen_users)
 
 
+def load_ids(path: str) -> set[str]:
+    file = Path(path)
+    if not file.exists():
+        return set()
+    return set(file.read_text().splitlines())
+
+
 def save_seen_files(seen_leagues: set, good_drafts: set, seen_users: set):
+    Path("data").mkdir(exist_ok=True)
     Path("data/seen_leagues.txt").write_text("\n".join(seen_leagues) + "\n")
     Path("data/good_drafts.txt").write_text("\n".join(good_drafts) + "\n")
     Path("data/seen_users.txt").write_text("\n".join(map(str, seen_users)) + "\n")
 
 
 def is_target_league(league):
-    pos_count = Counter(league["roster_positions"])
-    rec = league["scoring_settings"].get("rec")
-    pass_td = league["scoring_settings"].get("pass_td")
-    num_teams = league["settings"].get("num_teams")
+    roster_positions = league.get("roster_positions") or []
+    scoring_settings = league.get("scoring_settings") or {}
+    settings = league.get("settings") or {}
+
+    pos_count = Counter(roster_positions)
+    rec = scoring_settings.get("rec")
+    pass_td = scoring_settings.get("pass_td")
+    num_teams = settings.get("num_teams")
     return (
-        league["sport"] == "nfl"
-        and league["season_type"] == "regular"
-        and league["settings"].get("best_ball") == 0
-        and league["settings"].get("type") == 0
+        league.get("sport") == "nfl"
+        and league.get("season_type") == "regular"
+        and settings.get("best_ball") == 0
+        and settings.get("type") == 0
         and rec is not None
         and rec >= 0.5
         and rec <= 1.0
@@ -120,8 +133,10 @@ def is_target_league(league):
         and pos_count["WR"] == 2
         and pos_count["TE"] == 1
         and pos_count["FLEX"] <= 2
+        and pos_count["FLEX"] >= 1
         and "SUPER_FLEX" not in pos_count
         and "IDP" not in pos_count
+        and num_teams is not None
         and num_teams >= 10
         and num_teams <= 14
     )
