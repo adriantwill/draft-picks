@@ -16,8 +16,7 @@ last_request_time = 0.0
 def main():
     # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     print(len(load_ids("data/good_drafts.txt")))
-    return
-    draft_info()
+    draft_impact()
 
 
 def sleeper_get(url: str, retries: int = 3):
@@ -36,40 +35,66 @@ def sleeper_get(url: str, retries: int = 3):
 
 
 def draft_impact():
-    with Path("data/draft_metadata.json").open(encoding="utf-8") as f:
+    with Path("data/drafts_metadata.json").open(encoding="utf-8") as f:
         drafts = json.load(f)
+    with Path("nfl.json").open(encoding="utf-8") as f:
+        all_players = json.load(f)
+    team_size = 7
     for draft in drafts:
-        starters_score = {}
-        starter_count = -1  # TODO, get how many starters in this league
-        num_teams = -1  # TODO get total number of teams
-        draft_scores = np.empty(num_teams)
+        player_impact = defaultdict(int)
+        total_points = np.zeros(draft["teams"])
+        weekly_team_z = np.zeros(draft["teams"])
+        player_roster = {}
         for i in range(1, 18):
+            weekly_team_points = np.zeros(draft["teams"])
+            start_ratio = np.zeros(draft["teams"])
             matchups = sleeper_get(
                 f"https://api.sleeper.app/v1/league/{draft['league_id']}/matchups/{i}"
             )
-            draft_start_ratio = np.empty(num_teams)
-            team_points = np.empty(num_teams)
             for matchup in matchups:
                 roster = matchup["roster_id"]
-                # TODO remove kicker and defense from counted starters
+                points = matchup["points"]
+                for i, pos in enumerate(["DEF", "K"]):
+                    points -= (
+                        matchup["starters_points"][-i - 1]
+                        if matchup["starters"][-i - 1] in all_players
+                        and all_players[matchup["starters"][-i - 1]]["position"] == pos
+                        else 0
+                    )
+                roster_list = [
+                    pick["player_id"]
+                    for pick in draft["picks"]
+                    if pick["roster_id"] == roster
+                ]
                 draft_starter_count = 0
                 for starter in matchup["starters"]:
-                    if starter in draft["rosters"][roster]:
+                    if starter in roster_list:
+                        player_roster[starter] = roster
                         draft_starter_count += 1
-                draft_start_ratio[roster - 1] = draft_starter_count / starter_count
-                team_points[roster - 1] = matchup["points"]
-            z = (team_points - np.mean(team_points)) / np.std(team_points)
-            weekly_draft_value = z * draft_start_ratio
-            draft_scores += weekly_draft_value
+                        player_impact[starter] += matchup["players_points"][starter]
+                start_ratio[roster - 1] = draft_starter_count / team_size
+                total_points[roster - 1] += points
+                weekly_team_points[roster - 1] = points
+            week_z = (weekly_team_points - np.mean(weekly_team_points)) / np.std(
+                weekly_team_points
+            )
+            weekly_team_z += week_z * start_ratio
+
+        weekly_team_z /= 17
+        for pid in player_impact:
+            roster = player_roster[pid]
+            player_impact[pid] /= total_points[roster - 1]
+        draft["scores"] = list(weekly_team_z)
+        draft["player_impact"] = player_impact
+    Path("data/drafts_metadata_temp.json").write_text(json.dumps(drafts, indent=2))
 
 
 def draft_info():
     good_drafts = load_ids("data/good_drafts.txt")
     draft_list = []
-    total_count = 0
-    bad_count = 0
-    missing_players = defaultdict(int)
-    for draft in good_drafts:
+    for i, draft in enumerate(good_drafts):
+        if i > 0:
+            break
         response = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}")
         if not response:
             continue
@@ -77,7 +102,6 @@ def draft_info():
             "league_id": response.get("league_id"),
             "draft_id": response.get("draft_id"),
             "teams": response.get("settings", {}).get("teams"),
-            "flex": response.get("settings", {}).get("slots_flex"),
             "season": response.get("season"),
             "picks": [],
         }
@@ -94,41 +118,30 @@ def draft_info():
         picks = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}/picks")
         if not picks:
             continue
-        picked_players = set()
-        rosters = defaultdict(list)
         for pick in picks:
             metadata = pick.get("metadata") or {}
             player_name = metadata.get("first_name") + " " + metadata.get("last_name")
             position = metadata.get("position")
             if position == "K" or position == "DEF":
                 continue
-            overall_rank = -1
-            pos_rank = -1
-            adp = -1
-            missing_adp = False
+            overall_rank = None
+            pos_rank = None
+            adp = None
             if len(adp_csv[adp_csv["Player"] == player_name]) > 0:
-                overall_rank = adp_csv[adp_csv["Player"] == player_name].index[0]
-                pos_df = adp_csv[adp_csv["POS"].str[:2] == position]
-                pos_rank = pos_df[pos_df["Player"] == player_name].index[0]
-                adp = adp_csv[
-                    (adp_csv["Player"] == player_name)
-                    & (adp_csv["POS"].str[:2] == position)["AVG"]
-                ]
-            else:
-                missing_players[player_name] += 1
-                print(
-                    player_name
-                    + " "
-                    + response.get("season")
-                    + " "
-                    + str(missing_players[player_name])
-                    + " "
-                    + str(round(bad_count / total_count, 5))
+                overall_rank = (
+                    int(adp_csv[adp_csv["Player"] == player_name].index[0]) + 1
                 )
-                bad_count += 1
-                missing_adp = True
-            total_count += 1
-            roster_id = pick.get("roster_id")
+                pos_df = adp_csv[adp_csv["POS"].str[:2] == position].reset_index(
+                    drop=True
+                )
+                pos_rank = int(pos_df[pos_df["Player"] == player_name].index[0]) + 1
+
+                adp = float(
+                    adp_csv.loc[
+                        (adp_csv["Player"] == player_name)
+                        & (adp_csv["POS"].str[:2] == position)
+                    ]["AVG"].iloc[0]
+                )
             pick_json = {
                 "pick_no": pick.get("pick_no"),
                 "round": pick.get("round"),
@@ -137,18 +150,13 @@ def draft_info():
                 "player_id": pick.get("player_id"),
                 "player_position": metadata.get("position"),
                 "player_team": metadata.get("team"),
-                "picked_players_before": picked_players,
-                "roster_before": rosters[pick.get("roster_id")],
-                "adp": adp,
-                "overall_rank": overall_rank,
-                "pos_rank": pos_rank,
-                "missing_adp": missing_adp,
+                "adp": (adp),
+                "overall_rank": (overall_rank),
+                "pos_rank": (pos_rank),
             }
-            rosters[roster_id].append(pick.get("position"))
-            picked_players.add(pick.get("player_id"))
+            # print(pick_json)
             draft_json["picks"].append(pick_json)
         draft_list.append(draft_json)
-        draft_json["rosters"] = rosters
     Path("data/drafts_metadata.json").write_text(json.dumps(draft_list, indent=2))
 
 
@@ -257,21 +265,23 @@ def is_target_league(league):
         and settings.get("best_ball") == 0
         and settings.get("type") == 0
         and rec is not None
-        and rec >= 0.5
-        and rec <= 1.0
+        # and rec >= 0.5
+        and rec == 1.0
         and pass_td is not None
         and pass_td == 4.0
         and pos_count["QB"] == 1
         and pos_count["RB"] == 2
         and pos_count["WR"] == 2
         and pos_count["TE"] == 1
-        and pos_count["FLEX"] <= 2
-        and pos_count["FLEX"] >= 1
+        and pos_count["K"] <= 1
+        and pos_count["DEF"] <= 1
+        # and pos_count["FLEX"] <= 2
+        and pos_count["FLEX"] == 1
         and "SUPER_FLEX" not in pos_count
         and idp_positions.isdisjoint(pos_count)
         and num_teams is not None
         and num_teams >= 10
-        and num_teams <= 14
+        and num_teams <= 12
     )
 
 
