@@ -16,7 +16,40 @@ last_request_time = 0.0
 def main():
     # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     print(len(load_ids("data/good_drafts.txt")))
-    draft_impact()
+    # draft_impact()
+    create_merged()
+    merged = pd.read_csv("merged.csv")
+    print(expected_points(merged))
+
+
+def create_merged():
+    adp_finish = pd.DataFrame
+    for i in range(8):
+        adp = pd.read_csv(f"adp/FantasyPros_{2017 + i}_Overall_ADP_Rankings.csv")
+        finish = pd.read_csv(f"finsh/receiving_finish_{2017 + i}.csv")
+        adp = adp[["Player", "AVG"]]
+        finish = finish[["player", "fantasyPts", "position"]]
+        finish = finish.rename(columns={"player": "Player"})
+        adp["year"] = 2017 + i
+        clean_data([adp, finish])
+        merged = pd.merge(adp, finish, on="Player")
+        if adp_finish.empty:
+            adp_finish = merged
+        else:
+            adp_finish = pd.concat([adp_finish, merged], ignore_index=True)
+    adp_finish.to_csv("merged.csv", index=False)
+
+
+def clean_data(
+    dataframes: list[pd.DataFrame],
+):
+    for df in dataframes:
+        df["Player"] = df["Player"].str.replace(" Jr.", "", regex=False)
+        df["Player"] = df["Player"].str.replace(" Sr.", "", regex=False)
+        df["Player"] = df["Player"].str.replace(" III", "", regex=False)
+        df["Player"] = df["Player"].str.replace(" II", "", regex=False)
+        df["Player"] = df["Player"].str.replace(" IV", "", regex=False)
+        df["Player"] = df["Player"].str.strip()
 
 
 def sleeper_get(url: str, retries: int = 3):
@@ -89,6 +122,20 @@ def draft_impact():
     Path("data/drafts_metadata_temp.json").write_text(json.dumps(drafts, indent=2))
 
 
+def expected_points(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.sort_values(["year", "position", "AVG"]).copy()
+    df["bucket"] = df.groupby(by=["year", "position"]).cumcount() // 6
+    expected_points = (
+        df[df["year"] < 2024]
+        .groupby(by=["bucket", "position"])["fantasyPts"]
+        .median()
+        .to_frame("median")
+    ).reset_index()
+    df = df.merge(expected_points, on=["position", "bucket"])
+    df["expected_diff"] = df["fantasyPts"] - df["median"]
+    return df
+
+
 def draft_info():
     good_drafts = load_ids("data/good_drafts.txt")
     draft_list = []
@@ -108,12 +155,7 @@ def draft_info():
         adp_csv = pd.read_csv(
             f"adp/FantasyPros_{draft_json['season']}_Overall_ADP_Rankings.csv"
         )
-        adp_csv["Player"] = adp_csv["Player"].str.replace(" Jr.", "", regex=False)
-        adp_csv["Player"] = adp_csv["Player"].str.replace(" Sr.", "", regex=False)
-        adp_csv["Player"] = adp_csv["Player"].str.replace(" III", "", regex=False)
-        adp_csv["Player"] = adp_csv["Player"].str.replace(" II", "", regex=False)
-        adp_csv["Player"] = adp_csv["Player"].str.replace(" IV", "", regex=False)
-        adp_csv["Player"] = adp_csv["Player"].str.strip()
+        clean_data([adp_csv])
         adp_csv = adp_csv.sort_values("AVG")
         picks = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}/picks")
         if not picks:
