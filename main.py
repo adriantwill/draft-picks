@@ -1,4 +1,5 @@
 import json
+import re
 import time
 from collections import Counter, defaultdict, deque
 from pathlib import Path
@@ -19,7 +20,42 @@ def main():
     # draft_impact()
     create_merged()
     merged = pd.read_csv("merged.csv")
-    print(expected_points(merged))
+    (expected_points(merged))
+
+
+def train_model():
+    drafts = pd.read_json("drafts_metadata_temp.json")
+    rows = []
+    merged = pd.read_csv("merged_expected.csv")
+    pos_to_num = {"QB": 0, "RB": 1, "WR": 2, "TE": 3}
+    for draft in drafts:
+        team_pos_count = np.zeros(4, draft["teams"])
+        merged_year = merged[merged["year"] == draft["season"]]
+        merged_year = merged_year.sort_values("AVG")
+        for pick in draft["picks"]:
+            row = pick
+            del row["player_id"]
+            merged_year.drop(
+                merged_year[merged_year["sleeper_id"] == row["player_id"]].index
+            )
+            team_pos_count[pos_to_num[pick["player_position"]]][pick["roster_id"]] += 1
+            row["my_qb_picked"] = team_pos_count[0][pick["roster_id"]]
+            row["my_rb_picked"] = team_pos_count[1][pick["roster_id"]]
+            row["my_wr_picked"] = team_pos_count[2][pick["roster_id"]]
+            row["my_te_picked"] = team_pos_count[3][pick["roster_id"]]
+            row["qb_picked"] = sum(team_pos_count[0])
+            row["rb_picked"] = sum(team_pos_count[1])
+            row["wr_picked"] = sum(team_pos_count[2])
+            row["te_picked"] = sum(team_pos_count[3])
+            row["next_best_qb"] = merged_year[merged_year["position"] == "QB"].iloc[0]
+            row["target_score"] = draft["scores"][pick["roster_id"] - 1]
+
+
+def normalize_player_name(name: str) -> str:
+    name = str(name).lower()
+    name = re.sub(r"\b(jr|sr|ii|iii|iv|v)\b\.?", "", name)
+    name = re.sub(r"[^a-z0-9]+", "", name)
+    return name
 
 
 def create_merged():
@@ -133,6 +169,7 @@ def expected_points(df: pd.DataFrame) -> pd.DataFrame:
     ).reset_index()
     df = df.merge(expected_points, on=["position", "bucket"])
     df["expected_diff"] = df["fantasyPts"] - df["median"]
+    df.to_csv("merged_expected.csv", index=False)
     return df
 
 
@@ -191,7 +228,6 @@ def draft_info():
                 "roster_id": pick.get("roster_id"),
                 "player_id": pick.get("player_id"),
                 "player_position": metadata.get("position"),
-                "player_team": metadata.get("team"),
                 "adp": (adp),
                 "overall_rank": (overall_rank),
                 "pos_rank": (pos_rank),
