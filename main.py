@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import requests
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 
 REQUESTS_PER_MINUTE = 600
@@ -19,7 +19,7 @@ last_request_time = 0.0
 def main():
     # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     # print(len(load_ids("data/good_drafts.txt")))
-    train_model()
+    name_to_id()
 
 
 def train_model():
@@ -34,12 +34,12 @@ def train_model():
         merged_year = merged_year.sort_values("AVG")
         for pick in draft["picks"]:
             row = pick
+            print(row)
+            row["player_position"] = pos_to_num[row["player_position"]]
             merged_year.drop(
                 merged_year[merged_year["sleeper_id"] == pick["player_id"]].index
             )
-            team_pos_count[pos_to_num[pick["player_position"]]][
-                pick["roster_id"] - 1
-            ] += 1
+            team_pos_count[row["player_position"]][pick["roster_id"] - 1] += 1
             del row["player_id"]
             row["my_qb_picked"] = team_pos_count[0][pick["roster_id"] - 1]
             row["my_rb_picked"] = team_pos_count[1][pick["roster_id"] - 1]
@@ -49,7 +49,7 @@ def train_model():
             row["rb_picked"] = sum(team_pos_count[1])
             row["wr_picked"] = sum(team_pos_count[2])
             row["te_picked"] = sum(team_pos_count[3])
-            print(merged_year[merged_year["position"] == "QB"])
+
             row["next_best_qb"] = merged_year[merged_year["position"] == "QB"].iloc[0][
                 "AVG"
             ]
@@ -65,12 +65,13 @@ def train_model():
             row["target_score"] = draft["scores"][pick["roster_id"] - 1]
             rows.append(row)
     df = pd.DataFrame(rows)
+    print(df)
     X = df.drop(columns="target_score")
     y = df["target_score"]
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42
     )
-    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    model = LinearRegression()
     model.fit(X_train, y_train)
 
 
@@ -89,17 +90,18 @@ def create_merged():
         qb_finish = pd.read_csv(f"finsh/passing_finish_{2017 + i}.csv")
         qb_finish["position"] = "QB"
         finish = pd.concat([finish, qb_finish], ignore_index=True)
-        adp = adp[["Player", "AVG"]]
-        finish = finish[["player", "fantasyPts", "position"]]
-        finish = finish.rename(columns={"player": "Player"})
+        finish["normal_name"] = finish["player"].apply(normalize_player_name)
+        adp["normal_name"] = adp["Player"].apply(normalize_player_name)
+        adp = adp[["Player", "AVG", "normal_name"]]
+        finish = finish[["player", "fantasyPts", "position", "normal_name"]]
         adp["year"] = 2017 + i
-        clean_data([adp, finish])
-        merged = pd.merge(adp, finish, on="Player")
+        merged = pd.merge(adp, finish, on="normal_name")
+        merged = merged.drop(columns=["Player", "normal_name"])
         if adp_finish.empty:
             adp_finish = merged
         else:
             adp_finish = pd.concat([adp_finish, merged], ignore_index=True)
-    adp_finish.to_csv("merged.csv", index=False)
+    expected_points(adp_finish).to_csv("merged.csv", index=False)
 
 
 def clean_data(
@@ -117,7 +119,7 @@ def clean_data(
 def sleeper_get(url: str, retries: int = 3):
     for attempt in range(retries):
         try:
-            response = requests.get(url, timeout=20)
+            response = requests.get(url, timeout=20, verify=False)
             response.raise_for_status()
             return response.json()
 
@@ -184,8 +186,7 @@ def draft_impact():
     Path("data/drafts_metadata_temp.json").write_text(json.dumps(drafts, indent=2))
 
 
-def expected_points() -> pd.DataFrame:
-    df = pd.read_csv("merged.csv")
+def expected_points(df: pd.DataFrame) -> pd.DataFrame:
     df = df.sort_values(["year", "position", "AVG"]).copy()
     df["bucket"] = df.groupby(by=["year", "position"]).cumcount() // 6
     expected_points = (
@@ -196,8 +197,24 @@ def expected_points() -> pd.DataFrame:
     ).reset_index()
     df = df.merge(expected_points, on=["position", "bucket"])
     df["expected_diff"] = df["fantasyPts"] - df["median"]
-    df.to_csv("merged_expected.csv", index=False)
     return df
+
+
+def name_to_id():
+    players = pd.read_json("nfl.json").T
+    players = players.drop_duplicates(
+        subset=["search_full_name", "position"],
+        keep="first",
+    )
+    merged = pd.read_csv("merged.csv")
+    merged["search_full_name"] = merged["player"].apply(normalize_player_name)
+    merged = merged.merge(
+        players[["search_full_name", "position", "player_id"]],
+        on=["search_full_name", "position"],
+        how="left",
+    )
+    merged = merged.drop(columns=["search_full_name"])
+    merged.to_csv("merged.csv", index=False)
 
 
 def draft_info():
@@ -205,8 +222,6 @@ def draft_info():
     good_drafts = ["1125986091942735872"]
     draft_list = []
     merged_csv = pd.read_csv("merged_expected.csv")
-    print(merged_csv)
-    merged_csv.drop("sleeper_id", axis=1, inplace=True)
     for draft in good_drafts:
         response = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}")
         if not response:
@@ -218,9 +233,7 @@ def draft_info():
             "season": response.get("season"),
             "picks": [],
         }
-        adp_csv = pd.read_csv(
-            f"adp/FantasyPros_{draft_json['season']}_Overall_ADP_Rankings.csv"
-        )
+        adp_csv = merged_csv[(merged_csv["year"]) == int(response.get("season"))]
         adp_csv = adp_csv.sort_values("AVG")
         picks = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}/picks")
         if not picks:
@@ -232,30 +245,37 @@ def draft_info():
             position = metadata.get("position")
             if position == "K" or position == "DEF":
                 continue
-            merged_csv.loc[
-                (merged_csv["position"] == position)
-                & (merged_csv["Player"].apply(normalize_player_name) == player_name),
-                "sleeper_id",
-            ] = pick["player_id"]
-            print(merged_csv)
+            # merged_csv.loc[
+            #     (merged_csv["position"] == position)
+            #     & (merged_csv["Player"].apply(normalize_player_name) == player_name),
+            #     "sleeper_id",
+            # ] = pick["player_id"]
             overall_rank = None
             pos_rank = None
             adp = None
-            if len(adp_csv[adp_csv["Player"] == player_name]) > 0:
-                overall_rank = (
-                    int(adp_csv[adp_csv["Player"] == player_name].index[0]) + 1
+            print(player_name)
+            overall_rank = (
+                int(
+                    adp_csv[
+                        adp_csv["sleeper_id"] == float(pick.get("player_id"))
+                    ].index[0]
                 )
-                pos_df = adp_csv[adp_csv["POS"].str[:2] == position].reset_index(
-                    drop=True
+                + 1
+            )
+            pos_df = adp_csv[adp_csv["position"] == position].reset_index(drop=True)
+            pos_rank = (
+                int(
+                    pos_df[pos_df["sleeper_id"] == float(pick.get("player_id"))].index[
+                        0
+                    ]
                 )
-                pos_rank = int(pos_df[pos_df["Player"] == player_name].index[0]) + 1
-
-                adp = float(
-                    adp_csv.loc[
-                        (adp_csv["Player"] == player_name)
-                        & (adp_csv["POS"].str[:2] == position)
-                    ]["AVG"].iloc[0]
-                )
+                + 1
+            )
+            adp = (
+                adp_csv[adp_csv["sleeper_id"] == float(pick.get("player_id"))]
+                .reset_index()
+                .at[0, "AVG"]
+            )
             pick_json = {
                 "pick_no": pick.get("pick_no"),
                 "round": pick.get("round"),
