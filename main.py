@@ -7,6 +7,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import requests
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
 
 REQUESTS_PER_MINUTE = 600
 SECONDS_PER_REQUEST = 60 / REQUESTS_PER_MINUTE
@@ -16,39 +18,60 @@ last_request_time = 0.0
 
 def main():
     # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-    print(len(load_ids("data/good_drafts.txt")))
-    # draft_impact()
-    create_merged()
-    merged = pd.read_csv("merged.csv")
-    (expected_points(merged))
+    # print(len(load_ids("data/good_drafts.txt")))
+    expected_points()
 
 
 def train_model():
-    drafts = pd.read_json("drafts_metadata_temp.json")
+    with open("data/drafts_metadata_temp.json", "r") as f:
+        drafts = json.load(f)
     rows = []
     merged = pd.read_csv("merged_expected.csv")
     pos_to_num = {"QB": 0, "RB": 1, "WR": 2, "TE": 3}
     for draft in drafts:
-        team_pos_count = np.zeros(4, draft["teams"])
-        merged_year = merged[merged["year"] == draft["season"]]
+        team_pos_count = np.zeros((4, draft["teams"]))
+        merged_year = merged[merged["year"] == int(draft["season"])]
         merged_year = merged_year.sort_values("AVG")
         for pick in draft["picks"]:
             row = pick
-            del row["player_id"]
             merged_year.drop(
-                merged_year[merged_year["sleeper_id"] == row["player_id"]].index
+                merged_year[merged_year["sleeper_id"] == pick["player_id"]].index
             )
-            team_pos_count[pos_to_num[pick["player_position"]]][pick["roster_id"]] += 1
-            row["my_qb_picked"] = team_pos_count[0][pick["roster_id"]]
-            row["my_rb_picked"] = team_pos_count[1][pick["roster_id"]]
-            row["my_wr_picked"] = team_pos_count[2][pick["roster_id"]]
-            row["my_te_picked"] = team_pos_count[3][pick["roster_id"]]
+            team_pos_count[pos_to_num[pick["player_position"]]][
+                pick["roster_id"] - 1
+            ] += 1
+            del row["player_id"]
+            row["my_qb_picked"] = team_pos_count[0][pick["roster_id"] - 1]
+            row["my_rb_picked"] = team_pos_count[1][pick["roster_id"] - 1]
+            row["my_wr_picked"] = team_pos_count[2][pick["roster_id"] - 1]
+            row["my_te_picked"] = team_pos_count[3][pick["roster_id"] - 1]
             row["qb_picked"] = sum(team_pos_count[0])
             row["rb_picked"] = sum(team_pos_count[1])
             row["wr_picked"] = sum(team_pos_count[2])
             row["te_picked"] = sum(team_pos_count[3])
-            row["next_best_qb"] = merged_year[merged_year["position"] == "QB"].iloc[0]
+            print(merged_year[merged_year["position"] == "QB"])
+            row["next_best_qb"] = merged_year[merged_year["position"] == "QB"].iloc[0][
+                "AVG"
+            ]
+            row["next_best_rb"] = merged_year[merged_year["position"] == "RB"].iloc[0][
+                "AVG"
+            ]
+            row["next_best_wr"] = merged_year[merged_year["position"] == "WR"].iloc[0][
+                "AVG"
+            ]
+            row["next_best_te"] = merged_year[merged_year["position"] == "TE"].iloc[0][
+                "AVG"
+            ]
             row["target_score"] = draft["scores"][pick["roster_id"] - 1]
+            rows.append(row)
+    df = pd.DataFrame(rows)
+    X = df.drop(columns="target_score")
+    y = df["target_score"]
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
+    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    model.fit(X_train, y_train)
 
 
 def normalize_player_name(name: str) -> str:
@@ -63,6 +86,9 @@ def create_merged():
     for i in range(8):
         adp = pd.read_csv(f"adp/FantasyPros_{2017 + i}_Overall_ADP_Rankings.csv")
         finish = pd.read_csv(f"finsh/receiving_finish_{2017 + i}.csv")
+        qb_finish = pd.read_csv(f"finsh/passing_finish_{2017 + i}.csv")
+        qb_finish["position"] = "QB"
+        finish = pd.concat([finish, qb_finish], ignore_index=True)
         adp = adp[["Player", "AVG"]]
         finish = finish[["player", "fantasyPts", "position"]]
         finish = finish.rename(columns={"player": "Player"})
@@ -158,7 +184,8 @@ def draft_impact():
     Path("data/drafts_metadata_temp.json").write_text(json.dumps(drafts, indent=2))
 
 
-def expected_points(df: pd.DataFrame) -> pd.DataFrame:
+def expected_points() -> pd.DataFrame:
+    df = pd.read_csv("merged.csv")
     df = df.sort_values(["year", "position", "AVG"]).copy()
     df["bucket"] = df.groupby(by=["year", "position"]).cumcount() // 6
     expected_points = (
@@ -176,6 +203,7 @@ def expected_points(df: pd.DataFrame) -> pd.DataFrame:
 def draft_info():
     good_drafts = load_ids("data/good_drafts.txt")
     draft_list = []
+    merged_csv = pd.read_csv("merged_expected.csv")
     for i, draft in enumerate(good_drafts):
         if i > 0:
             break
@@ -192,7 +220,6 @@ def draft_info():
         adp_csv = pd.read_csv(
             f"adp/FantasyPros_{draft_json['season']}_Overall_ADP_Rankings.csv"
         )
-        clean_data([adp_csv])
         adp_csv = adp_csv.sort_values("AVG")
         picks = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}/picks")
         if not picks:
@@ -200,9 +227,16 @@ def draft_info():
         for pick in picks:
             metadata = pick.get("metadata") or {}
             player_name = metadata.get("first_name") + " " + metadata.get("last_name")
+            player_name = normalize_player_name(player_name)
             position = metadata.get("position")
             if position == "K" or position == "DEF":
                 continue
+            merged_csv.loc[
+                (merged_csv["position"] == position)
+                & (merged_csv["Player"].apply(normalize_player_name) == player_name),
+                "sleeper_id",
+            ] = pick["player_id"]
+            print(merged_csv)
             overall_rank = None
             pos_rank = None
             adp = None
@@ -236,6 +270,7 @@ def draft_info():
             draft_json["picks"].append(pick_json)
         draft_list.append(draft_json)
     Path("data/drafts_metadata.json").write_text(json.dumps(draft_list, indent=2))
+    merged_csv.to_csv("merged_expected.csv", index=False)
 
 
 def bfs_leagues():
