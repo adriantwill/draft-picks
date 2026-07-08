@@ -19,7 +19,7 @@ last_request_time = 0.0
 def main():
     # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     # print(len(load_ids("data/good_drafts.txt")))
-    expected_points()
+    train_model()
 
 
 def train_model():
@@ -202,11 +202,12 @@ def expected_points() -> pd.DataFrame:
 
 def draft_info():
     good_drafts = load_ids("data/good_drafts.txt")
+    good_drafts = ["1125986091942735872"]
     draft_list = []
     merged_csv = pd.read_csv("merged_expected.csv")
-    for i, draft in enumerate(good_drafts):
-        if i > 0:
-            break
+    print(merged_csv)
+    merged_csv.drop("sleeper_id", axis=1, inplace=True)
+    for draft in good_drafts:
         response = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}")
         if not response:
             continue
