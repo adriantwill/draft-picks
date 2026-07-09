@@ -12,9 +12,9 @@
         "roster_id": 3,
         "player_id": "4046",
         "player_position": "QB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 37.5,
+        "overall_rank": 2689,
+        "pos_rank": 3
       },
       {
         "pick_no": 2,
@@ -23,9 +23,9 @@
         "roster_id": 6,
         "player_id": "6786",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 2.0,
+        "overall_rank": 2935,
+        "pos_rank": 1
       },
       {
         "pick_no": 3,
@@ -34,9 +34,9 @@
         "roster_id": 10,
         "player_id": "3321",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 3.0,
+        "overall_rank": 2936,
+        "pos_rank": 2
       },
       {
         "pick_no": 4,
@@ -45,9 +45,9 @@
         "roster_id": 12,
         "player_id": "6794",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 7.5,
+        "overall_rank": 2939,
+        "pos_rank": 5
       },
       {
         "pick_no": 5,
@@ -56,9 +56,9 @@
         "roster_id": 2,
         "player_id": "4034",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 1.0,
+        "overall_rank": 2745,
+        "pos_rank": 1
       },
       {
         "pick_no": 6,
@@ -67,9 +67,9 @@
         "roster_id": 4,
         "player_id": "7547",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 5.5,
+        "overall_rank": 2937,
+        "pos_rank": 3
       },
       {
         "pick_no": 7,
@@ -78,9 +78,9 @@
         "roster_id": 7,
         "player_id": "7564",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 6.3,
+        "overall_rank": 2938,
+        "pos_rank": 4
       },
       {
         "pick_no": 8,
@@ -89,9 +89,9 @@
         "roster_id": 11,
         "player_id": "5859",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 9.5,
+        "overall_rank": 2940,
+        "pos_rank": 6
       },
       {
         "pick_no": 9,
@@ -100,9 +100,9 @@
         "roster_id": 5,
         "player_id": "8155",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 4.8,
+        "overall_rank": 2746,
+        "pos_rank": 2
       },
       {
         "pick_no": 10,
@@ -111,9 +111,9 @@
         "roster_id": 9,
         "player_id": "9509",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 6.0,
+        "overall_rank": 2747,
+        "pos_rank": 3
       },
       {
         "pick_no": 11,
@@ -122,9 +122,9 @@
         "roster_id": 1,
         "player_id": "4866",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 15.5,
+        "overall_rank": 2750,
+        "pos_rank": 6
       },
       {
         "pick_no": 12,
@@ -133,9 +133,9 @@
         "roster_id": 8,
         "player_id": "9221",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 13.5,
+        "overall_rank": 2749,
+        "pos_rank": 5
       },
       {
         "pick_no": 13,
@@ -144,9 +144,9 @@
         "roster_id": 8,
         "player_id": "8146",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 10.5,
+        "overall_rank": 2941,
+        "pos_rank": 7
       },
       {
         "pick_no": 14,
@@ -155,9 +155,9 @@
         "roster_id": 1,
         "player_id": "11628",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 14.3,
+        "overall_rank": 2943,
+        "pos_rank": 9
       },
       {
         "pick_no": 15,
@@ -166,9 +166,9 @@
         "roster_id": 9,
         "player_id": "8150",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 22.5,
+        "overall_rank": 2752,
+        "pos_rank": 8
       },
       {
         "pick_no": 16,
@@ -177,9 +177,9 @@
         "roster_id": 5,
         "player_id": "6813",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 11.8,
+        "overall_rank": 2748,
+        "pos_rank": 4
       },
       {
         "pick_no": 17,
@@ -188,9 +188,9 @@
         "roster_id": 11,
         "player_id": "4881",
         "player_position": "QB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 44.3,
+        "overall_rank": 2690,
+        "pos_rank": 4
       },
       {
         "pick_no": 18,
@@ -199,9 +199,9 @@
         "roster_id": 7,
         "player_id": "9493",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 12.0,
+        "overall_rank": 2942,
+        "pos_rank": 8
       },
       {
         "pick_no": 19,
@@ -210,9 +210,9 @@
         "roster_id": 4,
         "player_id": "7543",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 26.5,
+        "overall_rank": 2754,
+        "pos_rank": 10
       },
       {
         "pick_no": 20,
@@ -221,9 +221,9 @@
         "roster_id": 2,
         "player_id": "8144",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 24.0,
+        "overall_rank": 2948,
+        "pos_rank": 14
       },
       {
         "pick_no": 21,
@@ -232,9 +232,9 @@
         "roster_id": 12,
         "player_id": "4984",
         "player_position": "QB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 29.3,
+        "overall_rank": 2687,
+        "pos_rank": 1
       },
       {
         "pick_no": 22,
@@ -243,9 +243,9 @@
         "roster_id": 10,
         "player_id": "5850",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 37.0,
+        "overall_rank": 2756,
+        "pos_rank": 12
       },
       {
         "pick_no": 23,
@@ -254,9 +254,9 @@
         "roster_id": 6,
         "player_id": "8205",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 28.3,
+        "overall_rank": 2755,
+        "pos_rank": 11
       },
       {
         "pick_no": 24,
@@ -265,9 +265,9 @@
         "roster_id": 3,
         "player_id": "5872",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 22.0,
+        "overall_rank": 2947,
+        "pos_rank": 13
       },
       {
         "pick_no": 25,
@@ -276,9 +276,9 @@
         "roster_id": 3,
         "player_id": "1466",
         "player_position": "TE",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 38.3,
+        "overall_rank": 2859,
+        "pos_rank": 2
       },
       {
         "pick_no": 26,
@@ -287,9 +287,9 @@
         "roster_id": 6,
         "player_id": "6803",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 32.8,
+        "overall_rank": 2953,
+        "pos_rank": 19
       },
       {
         "pick_no": 27,
@@ -298,9 +298,9 @@
         "roster_id": 10,
         "player_id": "7569",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 20.3,
+        "overall_rank": 2945,
+        "pos_rank": 11
       },
       {
         "pick_no": 28,
@@ -309,9 +309,9 @@
         "roster_id": 12,
         "player_id": "9226",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 19.0,
+        "overall_rank": 2751,
+        "pos_rank": 7
       },
       {
         "pick_no": 29,
@@ -320,9 +320,9 @@
         "roster_id": 2,
         "player_id": "3198",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 26.3,
+        "overall_rank": 2753,
+        "pos_rank": 9
       },
       {
         "pick_no": 30,
@@ -331,9 +331,9 @@
         "roster_id": 4,
         "player_id": "10859",
         "player_position": "TE",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 35.3,
+        "overall_rank": 2858,
+        "pos_rank": 1
       },
       {
         "pick_no": 31,
@@ -342,9 +342,9 @@
         "roster_id": 7,
         "player_id": "9758",
         "player_position": "QB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 62.8,
+        "overall_rank": 2692,
+        "pos_rank": 6
       },
       {
         "pick_no": 32,
@@ -353,9 +353,9 @@
         "roster_id": 11,
         "player_id": "2133",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 21.0,
+        "overall_rank": 2946,
+        "pos_rank": 12
       },
       {
         "pick_no": 33,
@@ -364,9 +364,9 @@
         "roster_id": 5,
         "player_id": "8112",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 18.3,
+        "overall_rank": 2944,
+        "pos_rank": 10
       },
       {
         "pick_no": 34,
@@ -375,9 +375,9 @@
         "roster_id": 9,
         "player_id": "7526",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 28.8,
+        "overall_rank": 2950,
+        "pos_rank": 16
       },
       {
         "pick_no": 35,
@@ -386,9 +386,9 @@
         "roster_id": 1,
         "player_id": "6904",
         "player_position": "QB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 36.3,
+        "overall_rank": 2688,
+        "pos_rank": 2
       },
       {
         "pick_no": 36,
@@ -397,9 +397,9 @@
         "roster_id": 8,
         "player_id": "2216",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 33.5,
+        "overall_rank": 2955,
+        "pos_rank": 21
       },
       {
         "pick_no": 37,
@@ -408,9 +408,9 @@
         "roster_id": 8,
         "player_id": "5012",
         "player_position": "TE",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 52.8,
+        "overall_rank": 2862,
+        "pos_rank": 5
       },
       {
         "pick_no": 38,
@@ -419,9 +419,9 @@
         "roster_id": 1,
         "player_id": "4983",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 32.5,
+        "overall_rank": 2952,
+        "pos_rank": 18
       },
       {
         "pick_no": 39,
@@ -430,9 +430,9 @@
         "roster_id": 9,
         "player_id": "6819",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 34.8,
+        "overall_rank": 2957,
+        "pos_rank": 23
       },
       {
         "pick_no": 40,
@@ -441,9 +441,9 @@
         "roster_id": 5,
         "player_id": "4039",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 24.5,
+        "overall_rank": 2949,
+        "pos_rank": 15
       },
       {
         "pick_no": 41,
@@ -452,9 +452,9 @@
         "roster_id": 11,
         "player_id": "8136",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 48.0,
+        "overall_rank": 2759,
+        "pos_rank": 15
       },
       {
         "pick_no": 42,
@@ -463,9 +463,9 @@
         "roster_id": 7,
         "player_id": "4217",
         "player_position": "TE",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 69.5,
+        "overall_rank": 2864,
+        "pos_rank": 7
       },
       {
         "pick_no": 43,
@@ -474,9 +474,9 @@
         "roster_id": 4,
         "player_id": "6770",
         "player_position": "QB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 76.3,
+        "overall_rank": 2694,
+        "pos_rank": 8
       },
       {
         "pick_no": 44,
@@ -485,9 +485,9 @@
         "roster_id": 2,
         "player_id": "2449",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 38.8,
+        "overall_rank": 2958,
+        "pos_rank": 24
       },
       {
         "pick_no": 46,
@@ -496,9 +496,9 @@
         "roster_id": 10,
         "player_id": "11560",
         "player_position": "QB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 98.8,
+        "overall_rank": 2698,
+        "pos_rank": 12
       },
       {
         "pick_no": 47,
@@ -507,9 +507,9 @@
         "roster_id": 6,
         "player_id": "9229",
         "player_position": "QB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 58.8,
+        "overall_rank": 2691,
+        "pos_rank": 5
       },
       {
         "pick_no": 48,
@@ -518,9 +518,9 @@
         "roster_id": 3,
         "player_id": "8151",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 47.5,
+        "overall_rank": 2758,
+        "pos_rank": 14
       },
       {
         "pick_no": 50,
@@ -529,9 +529,9 @@
         "roster_id": 6,
         "player_id": "5846",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 31.8,
+        "overall_rank": 2951,
+        "pos_rank": 17
       },
       {
         "pick_no": 52,
@@ -540,9 +540,9 @@
         "roster_id": 12,
         "player_id": "8110",
         "player_position": "TE",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 86.0,
+        "overall_rank": 2866,
+        "pos_rank": 9
       },
       {
         "pick_no": 53,
@@ -551,9 +551,9 @@
         "roster_id": 2,
         "player_id": "8130",
         "player_position": "TE",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 47.3,
+        "overall_rank": 2860,
+        "pos_rank": 3
       },
       {
         "pick_no": 54,
@@ -562,9 +562,9 @@
         "roster_id": 4,
         "player_id": "10236",
         "player_position": "TE",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 52.5,
+        "overall_rank": 2861,
+        "pos_rank": 4
       },
       {
         "pick_no": 55,
@@ -573,9 +573,9 @@
         "roster_id": 7,
         "player_id": "4199",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 72.3,
+        "overall_rank": 2764,
+        "pos_rank": 20
       },
       {
         "pick_no": 56,
@@ -584,9 +584,9 @@
         "roster_id": 11,
         "player_id": "8138",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 46.3,
+        "overall_rank": 2757,
+        "pos_rank": 13
       },
       {
         "pick_no": 57,
@@ -595,9 +595,9 @@
         "roster_id": 5,
         "player_id": "11632",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 33.0,
+        "overall_rank": 2954,
+        "pos_rank": 20
       },
       {
         "pick_no": 58,
@@ -606,9 +606,9 @@
         "roster_id": 9,
         "player_id": "8137",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 54.8,
+        "overall_rank": 2965,
+        "pos_rank": 31
       },
       {
         "pick_no": 59,
@@ -617,9 +617,9 @@
         "roster_id": 1,
         "player_id": "4035",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 54.5,
+        "overall_rank": 2761,
+        "pos_rank": 17
       },
       {
         "pick_no": 60,
@@ -628,9 +628,9 @@
         "roster_id": 8,
         "player_id": "4018",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 53.8,
+        "overall_rank": 2760,
+        "pos_rank": 16
       },
       {
         "pick_no": 61,
@@ -639,9 +639,9 @@
         "roster_id": 8,
         "player_id": "9997",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 52.3,
+        "overall_rank": 2963,
+        "pos_rank": 29
       },
       {
         "pick_no": 62,
@@ -650,9 +650,9 @@
         "roster_id": 1,
         "player_id": "7553",
         "player_position": "TE",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 64.8,
+        "overall_rank": 2863,
+        "pos_rank": 6
       },
       {
         "pick_no": 63,
@@ -661,9 +661,9 @@
         "roster_id": 9,
         "player_id": "7525",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 33.8,
+        "overall_rank": 2956,
+        "pos_rank": 22
       },
       {
         "pick_no": 64,
@@ -672,9 +672,9 @@
         "roster_id": 5,
         "player_id": "2309",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 50.5,
+        "overall_rank": 2962,
+        "pos_rank": 27
       },
       {
         "pick_no": 65,
@@ -683,9 +683,9 @@
         "roster_id": 11,
         "player_id": "4066",
         "player_position": "TE",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 71.0,
+        "overall_rank": 2865,
+        "pos_rank": 8
       },
       {
         "pick_no": 66,
@@ -694,9 +694,9 @@
         "roster_id": 7,
         "player_id": "5927",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 54.5,
+        "overall_rank": 2964,
+        "pos_rank": 30
       },
       {
         "pick_no": 67,
@@ -705,9 +705,9 @@
         "roster_id": 4,
         "player_id": "9502",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 49.3,
+        "overall_rank": 2960,
+        "pos_rank": 26
       },
       {
         "pick_no": 68,
@@ -716,9 +716,9 @@
         "roster_id": 2,
         "player_id": "8183",
         "player_position": "QB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 101.0,
+        "overall_rank": 2699,
+        "pos_rank": 13
       },
       {
         "pick_no": 69,
@@ -727,9 +727,9 @@
         "roster_id": 12,
         "player_id": "6801",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 50.5,
+        "overall_rank": 2961,
+        "pos_rank": 28
       },
       {
         "pick_no": 71,
@@ -738,9 +738,9 @@
         "roster_id": 6,
         "player_id": "11604",
         "player_position": "TE",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 100.5,
+        "overall_rank": 2868,
+        "pos_rank": 11
       },
       {
         "pick_no": 72,
@@ -749,9 +749,9 @@
         "roster_id": 3,
         "player_id": "4950",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 60.8,
+        "overall_rank": 2966,
+        "pos_rank": 32
       },
       {
         "pick_no": 73,
@@ -760,9 +760,9 @@
         "roster_id": 3,
         "player_id": "4981",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 65.8,
+        "overall_rank": 2967,
+        "pos_rank": 33
       },
       {
         "pick_no": 74,
@@ -771,9 +771,9 @@
         "roster_id": 6,
         "player_id": "1479",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 68.0,
+        "overall_rank": 2969,
+        "pos_rank": 35
       },
       {
         "pick_no": 75,
@@ -782,9 +782,9 @@
         "roster_id": 10,
         "player_id": "4137",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 69.8,
+        "overall_rank": 2762,
+        "pos_rank": 18
       },
       {
         "pick_no": 76,
@@ -793,9 +793,9 @@
         "roster_id": 12,
         "player_id": "6790",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 74.5,
+        "overall_rank": 2766,
+        "pos_rank": 22
       },
       {
         "pick_no": 77,
@@ -804,9 +804,9 @@
         "roster_id": 2,
         "player_id": "5892",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 70.5,
+        "overall_rank": 2763,
+        "pos_rank": 19
       },
       {
         "pick_no": 78,
@@ -815,9 +815,9 @@
         "roster_id": 4,
         "player_id": "7611",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 76.3,
+        "overall_rank": 2767,
+        "pos_rank": 23
       },
       {
         "pick_no": 79,
@@ -826,9 +826,9 @@
         "roster_id": 7,
         "player_id": "5967",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 90.0,
+        "overall_rank": 2771,
+        "pos_rank": 27
       },
       {
         "pick_no": 80,
@@ -837,9 +837,9 @@
         "roster_id": 11,
         "player_id": "10229",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 44.0,
+        "overall_rank": 2959,
+        "pos_rank": 25
       },
       {
         "pick_no": 81,
@@ -848,9 +848,9 @@
         "roster_id": 5,
         "player_id": "5849",
         "player_position": "QB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 65.8,
+        "overall_rank": 2693,
+        "pos_rank": 7
       },
       {
         "pick_no": 82,
@@ -859,9 +859,9 @@
         "roster_id": 9,
         "player_id": "11620",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 80.8,
+        "overall_rank": 2973,
+        "pos_rank": 39
       },
       {
         "pick_no": 83,
@@ -870,9 +870,9 @@
         "roster_id": 1,
         "player_id": "11624",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 71.5,
+        "overall_rank": 2970,
+        "pos_rank": 36
       },
       {
         "pick_no": 84,
@@ -881,9 +881,9 @@
         "roster_id": 8,
         "player_id": "3294",
         "player_position": "QB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 83.8,
+        "overall_rank": 2696,
+        "pos_rank": 10
       },
       {
         "pick_no": 85,
@@ -892,9 +892,9 @@
         "roster_id": 8,
         "player_id": "9756",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 101.3,
+        "overall_rank": 2983,
+        "pos_rank": 49
       },
       {
         "pick_no": 87,
@@ -903,9 +903,9 @@
         "roster_id": 9,
         "player_id": "6768",
         "player_position": "QB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 107.3,
+        "overall_rank": 2701,
+        "pos_rank": 14
       },
       {
         "pick_no": 88,
@@ -914,9 +914,9 @@
         "roster_id": 5,
         "player_id": "7528",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 73.0,
+        "overall_rank": 2765,
+        "pos_rank": 21
       },
       {
         "pick_no": 89,
@@ -925,9 +925,9 @@
         "roster_id": 11,
         "player_id": "10222",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 72.3,
+        "overall_rank": 2971,
+        "pos_rank": 37
       },
       {
         "pick_no": 90,
@@ -936,9 +936,9 @@
         "roster_id": 7,
         "player_id": "6804",
         "player_position": "QB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 80.0,
+        "overall_rank": 2695,
+        "pos_rank": 9
       },
       {
         "pick_no": 91,
@@ -947,9 +947,9 @@
         "roster_id": 4,
         "player_id": "2749",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 82.8,
+        "overall_rank": 2769,
+        "pos_rank": 25
       },
       {
         "pick_no": 92,
@@ -958,9 +958,9 @@
         "roster_id": 2,
         "player_id": "4037",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 66.0,
+        "overall_rank": 2968,
+        "pos_rank": 34
       },
       {
         "pick_no": 93,
@@ -969,9 +969,9 @@
         "roster_id": 12,
         "player_id": "8139",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 82.3,
+        "overall_rank": 2768,
+        "pos_rank": 24
       },
       {
         "pick_no": 94,
@@ -980,9 +980,9 @@
         "roster_id": 10,
         "player_id": "4033",
         "player_position": "TE",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 99.3,
+        "overall_rank": 2867,
+        "pos_rank": 10
       },
       {
         "pick_no": 95,
@@ -991,9 +991,9 @@
         "roster_id": 6,
         "player_id": "7588",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 84.3,
+        "overall_rank": 2770,
+        "pos_rank": 26
       },
       {
         "pick_no": 96,
@@ -1002,9 +1002,9 @@
         "roster_id": 3,
         "player_id": "8154",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 98.5,
+        "overall_rank": 2773,
+        "pos_rank": 29
       },
       {
         "pick_no": 97,
@@ -1013,9 +1013,9 @@
         "roster_id": 3,
         "player_id": "6130",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 100.5,
+        "overall_rank": 2774,
+        "pos_rank": 30
       },
       {
         "pick_no": 98,
@@ -1024,9 +1024,9 @@
         "roster_id": 6,
         "player_id": "3163",
         "player_position": "QB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 107.3,
+        "overall_rank": 2700,
+        "pos_rank": 15
       },
       {
         "pick_no": 99,
@@ -1035,9 +1035,9 @@
         "roster_id": 10,
         "player_id": "11637",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 100.0,
+        "overall_rank": 2982,
+        "pos_rank": 48
       },
       {
         "pick_no": 103,
@@ -1046,9 +1046,9 @@
         "roster_id": 7,
         "player_id": "8167",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 84.3,
+        "overall_rank": 2975,
+        "pos_rank": 41
       },
       {
         "pick_no": 105,
@@ -1057,9 +1057,9 @@
         "roster_id": 5,
         "player_id": "5937",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 74.0,
+        "overall_rank": 2972,
+        "pos_rank": 38
       },
       {
         "pick_no": 106,
@@ -1068,9 +1068,9 @@
         "roster_id": 9,
         "player_id": "5022",
         "player_position": "TE",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 119.3,
+        "overall_rank": 2869,
+        "pos_rank": 12
       },
       {
         "pick_no": 107,
@@ -1079,9 +1079,9 @@
         "roster_id": 1,
         "player_id": "11635",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 96.3,
+        "overall_rank": 2980,
+        "pos_rank": 46
       },
       {
         "pick_no": 108,
@@ -1090,9 +1090,9 @@
         "roster_id": 8,
         "player_id": "6845",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 102.5,
+        "overall_rank": 2776,
+        "pos_rank": 32
       },
       {
         "pick_no": 109,
@@ -1101,9 +1101,9 @@
         "roster_id": 8,
         "player_id": "5844",
         "player_position": "TE",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 140.5,
+        "overall_rank": 2872,
+        "pos_rank": 15
       },
       {
         "pick_no": 110,
@@ -1112,9 +1112,9 @@
         "roster_id": 1,
         "player_id": "4988",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 126.5,
+        "overall_rank": 2785,
+        "pos_rank": 41
       },
       {
         "pick_no": 112,
@@ -1123,9 +1123,9 @@
         "roster_id": 5,
         "player_id": "11631",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 88.5,
+        "overall_rank": 2976,
+        "pos_rank": 42
       },
       {
         "pick_no": 116,
@@ -1134,9 +1134,9 @@
         "roster_id": 2,
         "player_id": "4663",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 112.3,
+        "overall_rank": 2780,
+        "pos_rank": 36
       },
       {
         "pick_no": 117,
@@ -1145,9 +1145,9 @@
         "roster_id": 12,
         "player_id": "5001",
         "player_position": "TE",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 131.8,
+        "overall_rank": 2870,
+        "pos_rank": 13
       },
       {
         "pick_no": 118,
@@ -1156,9 +1156,9 @@
         "roster_id": 10,
         "player_id": "1426",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 92.5,
+        "overall_rank": 2977,
+        "pos_rank": 43
       },
       {
         "pick_no": 121,
@@ -1167,9 +1167,9 @@
         "roster_id": 3,
         "player_id": "7523",
         "player_position": "QB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 111.0,
+        "overall_rank": 2702,
+        "pos_rank": 16
       },
       {
         "pick_no": 122,
@@ -1178,9 +1178,9 @@
         "roster_id": 6,
         "player_id": "7600",
         "player_position": "TE",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 135.8,
+        "overall_rank": 2871,
+        "pos_rank": 14
       },
       {
         "pick_no": 123,
@@ -1189,9 +1189,9 @@
         "roster_id": 10,
         "player_id": "5848",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 94.8,
+        "overall_rank": 2979,
+        "pos_rank": 45
       },
       {
         "pick_no": 124,
@@ -1200,9 +1200,9 @@
         "roster_id": 12,
         "player_id": "9488",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 83.0,
+        "overall_rank": 2974,
+        "pos_rank": 40
       },
       {
         "pick_no": 125,
@@ -1211,9 +1211,9 @@
         "roster_id": 2,
         "player_id": "8148",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 96.3,
+        "overall_rank": 2981,
+        "pos_rank": 47
       },
       {
         "pick_no": 126,
@@ -1222,9 +1222,9 @@
         "roster_id": 4,
         "player_id": "11583",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 107.0,
+        "overall_rank": 2778,
+        "pos_rank": 34
       },
       {
         "pick_no": 127,
@@ -1233,9 +1233,9 @@
         "roster_id": 7,
         "player_id": "5045",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 94.3,
+        "overall_rank": 2978,
+        "pos_rank": 44
       },
       {
         "pick_no": 128,
@@ -1244,9 +1244,9 @@
         "roster_id": 11,
         "player_id": "8228",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 92.8,
+        "overall_rank": 2772,
+        "pos_rank": 28
       },
       {
         "pick_no": 129,
@@ -1255,9 +1255,9 @@
         "roster_id": 5,
         "player_id": "9508",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 104.0,
+        "overall_rank": 2777,
+        "pos_rank": 33
       },
       {
         "pick_no": 130,
@@ -1266,9 +1266,9 @@
         "roster_id": 9,
         "player_id": "5248",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 122.8,
+        "overall_rank": 2782,
+        "pos_rank": 38
       },
       {
         "pick_no": 131,
@@ -1277,9 +1277,9 @@
         "roster_id": 1,
         "player_id": "1166",
         "player_position": "QB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 125.8,
+        "overall_rank": 2703,
+        "pos_rank": 17
       },
       {
         "pick_no": 133,
@@ -1288,9 +1288,9 @@
         "roster_id": 8,
         "player_id": "4943",
         "player_position": "QB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 180.5,
+        "overall_rank": 2714,
+        "pos_rank": 28
       },
       {
         "pick_no": 134,
@@ -1299,9 +1299,9 @@
         "roster_id": 1,
         "player_id": "6826",
         "player_position": "TE",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 146.3,
+        "overall_rank": 2873,
+        "pos_rank": 16
       },
       {
         "pick_no": 135,
@@ -1310,9 +1310,9 @@
         "roster_id": 9,
         "player_id": "11589",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 125.5,
+        "overall_rank": 2784,
+        "pos_rank": 40
       },
       {
         "pick_no": 136,
@@ -1321,9 +1321,9 @@
         "roster_id": 5,
         "player_id": "9224",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 102.3,
+        "overall_rank": 2775,
+        "pos_rank": 31
       },
       {
         "pick_no": 137,
@@ -1332,9 +1332,9 @@
         "roster_id": 11,
         "player_id": "3164",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 130.3,
+        "overall_rank": 2786,
+        "pos_rank": 42
       },
       {
         "pick_no": 138,
@@ -1343,9 +1343,9 @@
         "roster_id": 7,
         "player_id": "6797",
         "player_position": "QB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 126.5,
+        "overall_rank": 2704,
+        "pos_rank": 18
       },
       {
         "pick_no": 139,
@@ -1354,9 +1354,9 @@
         "roster_id": 4,
         "player_id": "6783",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 135.5,
+        "overall_rank": 2992,
+        "pos_rank": 58
       },
       {
         "pick_no": 140,
@@ -1365,9 +1365,9 @@
         "roster_id": 2,
         "player_id": "11566",
         "player_position": "QB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 88.8,
+        "overall_rank": 2697,
+        "pos_rank": 11
       },
       {
         "pick_no": 141,
@@ -1376,9 +1376,9 @@
         "roster_id": 12,
         "player_id": "8143",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 108.0,
+        "overall_rank": 2779,
+        "pos_rank": 35
       },
       {
         "pick_no": 142,
@@ -1387,9 +1387,9 @@
         "roster_id": 10,
         "player_id": "8121",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 108.3,
+        "overall_rank": 2985,
+        "pos_rank": 51
       },
       {
         "pick_no": 144,
@@ -1409,9 +1409,9 @@
         "roster_id": 3,
         "player_id": "4082",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 118.5,
+        "overall_rank": 2987,
+        "pos_rank": 53
       },
       {
         "pick_no": 146,
@@ -1420,9 +1420,9 @@
         "roster_id": 6,
         "player_id": "2374",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 131.8,
+        "overall_rank": 2991,
+        "pos_rank": 57
       },
       {
         "pick_no": 147,
@@ -1431,9 +1431,9 @@
         "roster_id": 10,
         "player_id": "11586",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 116.8,
+        "overall_rank": 2781,
+        "pos_rank": 37
       },
       {
         "pick_no": 148,
@@ -1442,9 +1442,9 @@
         "roster_id": 12,
         "player_id": "96",
         "player_position": "QB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 138.5,
+        "overall_rank": 2706,
+        "pos_rank": 20
       },
       {
         "pick_no": 149,
@@ -1453,9 +1453,9 @@
         "roster_id": 2,
         "player_id": "8134",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 105.5,
+        "overall_rank": 2984,
+        "pos_rank": 50
       },
       {
         "pick_no": 150,
@@ -1464,9 +1464,9 @@
         "roster_id": 4,
         "player_id": "421",
         "player_position": "QB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 135.3,
+        "overall_rank": 2705,
+        "pos_rank": 19
       },
       {
         "pick_no": 151,
@@ -1475,9 +1475,9 @@
         "roster_id": 7,
         "player_id": "4381",
         "player_position": "TE",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 158.0,
+        "overall_rank": 2875,
+        "pos_rank": 18
       },
       {
         "pick_no": 152,
@@ -1486,9 +1486,9 @@
         "roster_id": 11,
         "player_id": "11625",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 145.3,
+        "overall_rank": 2996,
+        "pos_rank": 62
       },
       {
         "pick_no": 153,
@@ -1497,9 +1497,9 @@
         "roster_id": 5,
         "player_id": "9481",
         "player_position": "TE",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 155.5,
+        "overall_rank": 2874,
+        "pos_rank": 17
       },
       {
         "pick_no": 154,
@@ -1508,9 +1508,9 @@
         "roster_id": 9,
         "player_id": "9753",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 140.0,
+        "overall_rank": 2790,
+        "pos_rank": 46
       },
       {
         "pick_no": 155,
@@ -1519,9 +1519,9 @@
         "roster_id": 1,
         "player_id": "1689",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 156.0,
+        "overall_rank": 3000,
+        "pos_rank": 66
       },
       {
         "pick_no": 157,
@@ -1530,9 +1530,9 @@
         "roster_id": 8,
         "player_id": "6806",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 138.3,
+        "overall_rank": 2788,
+        "pos_rank": 44
       },
       {
         "pick_no": 159,
@@ -1541,9 +1541,9 @@
         "roster_id": 9,
         "player_id": "11626",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 166.0,
+        "overall_rank": 3002,
+        "pos_rank": 68
       },
       {
         "pick_no": 161,
@@ -1552,9 +1552,9 @@
         "roster_id": 11,
         "player_id": "5947",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 124.8,
+        "overall_rank": 2988,
+        "pos_rank": 54
       },
       {
         "pick_no": 163,
@@ -1563,9 +1563,9 @@
         "roster_id": 4,
         "player_id": "7670",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 115.3,
+        "overall_rank": 2986,
+        "pos_rank": 52
       },
       {
         "pick_no": 165,
@@ -1574,9 +1574,9 @@
         "roster_id": 12,
         "player_id": "6943",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 138.8,
+        "overall_rank": 2994,
+        "pos_rank": 60
       },
       {
         "pick_no": 166,
@@ -1585,9 +1585,9 @@
         "roster_id": 10,
         "player_id": "7594",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 131.3,
+        "overall_rank": 2787,
+        "pos_rank": 43
       },
       {
         "pick_no": 167,
@@ -1596,9 +1596,9 @@
         "roster_id": 6,
         "player_id": "6945",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 161.0,
+        "overall_rank": 2796,
+        "pos_rank": 52
       },
       {
         "pick_no": 168,
@@ -1607,9 +1607,9 @@
         "roster_id": 3,
         "player_id": "11596",
         "player_position": "TE",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 196.8,
+        "overall_rank": 2883,
+        "pos_rank": 26
       },
       {
         "pick_no": 169,
@@ -1618,9 +1618,9 @@
         "roster_id": 3,
         "player_id": "8111",
         "player_position": "TE",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 179.8,
+        "overall_rank": 2879,
+        "pos_rank": 22
       },
       {
         "pick_no": 171,
@@ -1629,9 +1629,9 @@
         "roster_id": 10,
         "player_id": "7021",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 123.5,
+        "overall_rank": 2783,
+        "pos_rank": 39
       },
       {
         "pick_no": 172,
@@ -1640,9 +1640,9 @@
         "roster_id": 12,
         "player_id": "11439",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 143.0,
+        "overall_rank": 2791,
+        "pos_rank": 47
       },
       {
         "pick_no": 173,
@@ -1651,9 +1651,9 @@
         "roster_id": 2,
         "player_id": "4068",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 136.5,
+        "overall_rank": 2993,
+        "pos_rank": 59
       },
       {
         "pick_no": 174,
@@ -1662,9 +1662,9 @@
         "roster_id": 4,
         "player_id": "11643",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 145.0,
+        "overall_rank": 2792,
+        "pos_rank": 48
       },
       {
         "pick_no": 175,
@@ -1673,9 +1673,9 @@
         "roster_id": 7,
         "player_id": "8132",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 146.8,
+        "overall_rank": 2793,
+        "pos_rank": 49
       },
       {
         "pick_no": 176,
@@ -1684,9 +1684,9 @@
         "roster_id": 11,
         "player_id": "4892",
         "player_position": "QB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 149.3,
+        "overall_rank": 2707,
+        "pos_rank": 21
       },
       {
         "pick_no": 179,
@@ -1695,9 +1695,9 @@
         "roster_id": 1,
         "player_id": "11619",
         "player_position": "WR",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 153.3,
+        "overall_rank": 2999,
+        "pos_rank": 65
       },
       {
         "pick_no": 180,
@@ -1706,10 +1706,151 @@
         "roster_id": 8,
         "player_id": "8230",
         "player_position": "RB",
-        "adp": null,
-        "overall_rank": null,
-        "pos_rank": null
+        "adp": 138.8,
+        "overall_rank": 2789,
+        "pos_rank": 45
       }
-    ]
+    ],
+    "scores": [
+      0.4097858629811353,
+      0.5962197544141022,
+      -0.21281475159366675,
+      -0.1512314970922382,
+      0.5359062160558132,
+      -0.2673642703610013,
+      0.4166271150461286,
+      0.4929662637000292,
+      -0.5174242507641856,
+      -0.8618992516979825,
+      -0.4484554045535032,
+      0.02419370737985646
+    ],
+    "player_impact": {
+      "6904": 0.15974370745923072,
+      "4866": 0.17729894808279598,
+      "4035": 0.13238787201341343,
+      "11628": 0.06661809616958421,
+      "4983": 0.049701590850116766,
+      "7553": 0.04545998922134174,
+      "11624": 0.02989081618395576,
+      "11635": 0.09376434659374437,
+      "11566": 0.12340270171595469,
+      "4034": 0.022373877795564535,
+      "3198": 0.1402345980659233,
+      "8144": 0.02714821991930425,
+      "2449": 0.05706743056140645,
+      "8130": 0.10779715598992703,
+      "5892": 0.10378109173289896,
+      "4037": 0.06450042594620907,
+      "4046": 0.1076174884437596,
+      "8151": 0.10906201848998458,
+      "6130": 0.028469279661016943,
+      "5872": 0.053628177966101684,
+      "4950": 0.03791891371340523,
+      "1466": 0.11760882126348227,
+      "4981": 0.02082530816640986,
+      "4082": 0.002106606317411402,
+      "6770": 0.19207844855921988,
+      "7543": 0.03182864029801687,
+      "7611": 0.08102333735071765,
+      "7547": 0.16570614659800592,
+      "9502": 0.07214857017639968,
+      "10859": 0.08305029034732114,
+      "10236": 0.024268653445820094,
+      "2749": 0.020214747452613126,
+      "5849": 0.11628524801700256,
+      "8155": 0.08980416714106798,
+      "6813": 0.0823560666438954,
+      "8112": 0.10873277923260842,
+      "11632": 0.1144730350297924,
+      "9481": 0.0,
+      "4039": 0.08117006338001441,
+      "2309": 0.028938479638695964,
+      "9229": 0.028022790121102314,
+      "8205": 0.03391103270716125,
+      "7588": 0.08510536855154002,
+      "6786": 0.15698007056355487,
+      "6803": 0.037188900543530086,
+      "11604": 0.14762324783064745,
+      "5846": 0.10542814913702678,
+      "1479": 0.07652331457995613,
+      "9758": 0.06305406653037769,
+      "4199": 0.10791638011436971,
+      "5967": 0.07809923973357702,
+      "7564": 0.17777233459259328,
+      "9493": 0.09731787050034386,
+      "4217": 0.10923530575522622,
+      "5927": 0.1166307102414576,
+      "8167": 0.008949852562955147,
+      "3294": 0.015560523542678185,
+      "9221": 0.15604841489476953,
+      "4018": 0.10316233171490759,
+      "8146": 0.11955997203045138,
+      "2216": 0.10488580742374852,
+      "5012": 0.035602083928342805,
+      "9997": 0.10163582465850561,
+      "9756": 0.0928707196249717,
+      "6768": 0.016308858019123216,
+      "9509": 0.18666185579409464,
+      "8150": 0.16362980335558358,
+      "7526": 0.08455108545312404,
+      "6819": 0.09176739431114317,
+      "5022": 0.05658788862829994,
+      "7525": 0.11991099885741774,
+      "11620": 0.028744963617776165,
+      "11560": 0.1685915359781713,
+      "5850": 0.1901230565573881,
+      "4137": 0.1714146776350448,
+      "3321": 0.1446691250962435,
+      "7569": 0.10549634612527187,
+      "4033": 0.005673299023382097,
+      "11586": 0.001891099674460699,
+      "5848": 0.0,
+      "4881": 0.25086895542411125,
+      "8136": 0.12171473870357952,
+      "8138": 0.15726568693213,
+      "5859": 0.013964266113787427,
+      "2133": 0.1344594182572108,
+      "4066": 0.054576498566985786,
+      "10229": 0.03957558387706568,
+      "10222": 0.11701933044697847,
+      "4984": 0.20420675244227118,
+      "9226": 0.02142622272664595,
+      "8143": 0.032404510113813546,
+      "6794": 0.16392121089979525,
+      "6943": 0.011190428206243304,
+      "8110": 0.030601313151670074,
+      "8139": 0.0060460133436575185,
+      "9488": 0.13136820221262874,
+      "8148": 0.0760150157740519,
+      "8154": 0.05687837057010785,
+      "421": 0.003637558891201928,
+      "6783": 0.11893283663854498,
+      "6806": 0.0704655354100395,
+      "5947": 0.11055552167815111,
+      "6790": 0.08554578529227701,
+      "5001": 0.0021744433955259495,
+      "8183": 0.05712359929227398,
+      "7528": 0.03439409465254848,
+      "4943": 0.13580003742404398,
+      "6845": 0.023242300987797795,
+      "8121": 0.07692723318609773,
+      "11637": 0.06510786022071835,
+      "6801": 0.04301155106759867,
+      "8134": 0.057151683657707744,
+      "3163": 0.13123390864880327,
+      "4663": 0.037867086059857134,
+      "11631": 0.0560267941857376,
+      "9224": 0.07305780105506848,
+      "7600": 0.012932678554400686,
+      "8137": 0.057790606771303134,
+      "11439": 0.0024926546241395035,
+      "11643": 0.000986085241590884,
+      "8111": 0.018177003081664096,
+      "5844": 0.04116644835974355,
+      "4988": 0.011976286951835365,
+      "1426": 0.021747646256298037,
+      "9753": 0.01653737446629382
+    }
   }
 ]

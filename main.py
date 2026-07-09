@@ -19,14 +19,14 @@ last_request_time = 0.0
 def main():
     # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     # print(len(load_ids("data/good_drafts.txt")))
-    name_to_id()
+    train_model()
 
 
 def train_model():
-    with open("data/drafts_metadata_temp.json", "r") as f:
+    with open("data/drafts_metadata.json", "r") as f:
         drafts = json.load(f)
     rows = []
-    merged = pd.read_csv("merged_expected.csv")
+    merged = pd.read_csv("merged.csv")
     pos_to_num = {"QB": 0, "RB": 1, "WR": 2, "TE": 3}
     for draft in drafts:
         team_pos_count = np.zeros((4, draft["teams"]))
@@ -37,7 +37,7 @@ def train_model():
             print(row)
             row["player_position"] = pos_to_num[row["player_position"]]
             merged_year.drop(
-                merged_year[merged_year["sleeper_id"] == pick["player_id"]].index
+                merged_year[merged_year["player_id"] == pick["player_id"]].index
             )
             team_pos_count[row["player_position"]][pick["roster_id"] - 1] += 1
             del row["player_id"]
@@ -119,7 +119,10 @@ def clean_data(
 def sleeper_get(url: str, retries: int = 3):
     for attempt in range(retries):
         try:
-            response = requests.get(url, timeout=20, verify=False)
+            response = requests.get(
+                url,
+                timeout=20,  # verify=False
+            )
             response.raise_for_status()
             return response.json()
 
@@ -183,7 +186,7 @@ def draft_impact():
             player_impact[pid] /= total_points[roster - 1]
         draft["scores"] = list(weekly_team_z)
         draft["player_impact"] = player_impact
-    Path("data/drafts_metadata_temp.json").write_text(json.dumps(drafts, indent=2))
+    Path("data/drafts_metadata.json").write_text(json.dumps(drafts, indent=2))
 
 
 def expected_points(df: pd.DataFrame) -> pd.DataFrame:
@@ -221,7 +224,7 @@ def draft_info():
     good_drafts = load_ids("data/good_drafts.txt")
     good_drafts = ["1125986091942735872"]
     draft_list = []
-    merged_csv = pd.read_csv("merged_expected.csv")
+    merged_csv = pd.read_csv("merged.csv")
     for draft in good_drafts:
         response = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}")
         if not response:
@@ -245,37 +248,23 @@ def draft_info():
             position = metadata.get("position")
             if position == "K" or position == "DEF":
                 continue
-            # merged_csv.loc[
-            #     (merged_csv["position"] == position)
-            #     & (merged_csv["Player"].apply(normalize_player_name) == player_name),
-            #     "sleeper_id",
-            # ] = pick["player_id"]
             overall_rank = None
             pos_rank = None
             adp = None
             print(player_name)
-            overall_rank = (
-                int(
-                    adp_csv[
-                        adp_csv["sleeper_id"] == float(pick.get("player_id"))
-                    ].index[0]
+            match = adp_csv[adp_csv["player_id"] == float(pick.get("player_id"))]
+            if not match.empty:
+                overall_rank = int(match.index[0]) + 1
+                pos_df = adp_csv[adp_csv["position"] == position].reset_index(drop=True)
+                pos_rank = (
+                    int(
+                        pos_df[
+                            pos_df["player_id"] == float(pick.get("player_id"))
+                        ].index[0]
+                    )
+                    + 1
                 )
-                + 1
-            )
-            pos_df = adp_csv[adp_csv["position"] == position].reset_index(drop=True)
-            pos_rank = (
-                int(
-                    pos_df[pos_df["sleeper_id"] == float(pick.get("player_id"))].index[
-                        0
-                    ]
-                )
-                + 1
-            )
-            adp = (
-                adp_csv[adp_csv["sleeper_id"] == float(pick.get("player_id"))]
-                .reset_index()
-                .at[0, "AVG"]
-            )
+                adp = match.reset_index().at[0, "AVG"]
             pick_json = {
                 "pick_no": pick.get("pick_no"),
                 "round": pick.get("round"),
@@ -291,7 +280,6 @@ def draft_info():
             draft_json["picks"].append(pick_json)
         draft_list.append(draft_json)
     Path("data/drafts_metadata.json").write_text(json.dumps(draft_list, indent=2))
-    merged_csv.to_csv("merged_expected.csv", index=False)
 
 
 def bfs_leagues():
