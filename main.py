@@ -33,13 +33,12 @@ def train_model():
         merged_year = merged[merged["year"] == int(draft["season"])]
         merged_year = merged_year.sort_values("AVG")
         for pick in draft["picks"]:
-            row = pick
+            row = pick.copy()
             print(row)
             row["player_position"] = pos_to_num[row["player_position"]]
-            merged_year.drop(
+            merged_year = merged_year.drop(
                 merged_year[merged_year["player_id"] == pick["player_id"]].index
             )
-            team_pos_count[row["player_position"]][pick["roster_id"] - 1] += 1
             del row["player_id"]
             row["my_qb_picked"] = team_pos_count[0][pick["roster_id"] - 1]
             row["my_rb_picked"] = team_pos_count[1][pick["roster_id"] - 1]
@@ -63,6 +62,7 @@ def train_model():
                 "AVG"
             ]
             row["target_score"] = draft["scores"][pick["roster_id"] - 1]
+            team_pos_count[row["player_position"]][pick["roster_id"] - 1] += 1
             rows.append(row)
     df = pd.DataFrame(rows)
     print(df)
