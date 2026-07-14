@@ -8,7 +8,6 @@ import numpy as np
 import pandas as pd
 import requests
 from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
 
 REQUESTS_PER_MINUTE = 600
 SECONDS_PER_REQUEST = 60 / REQUESTS_PER_MINUTE
@@ -29,12 +28,14 @@ def train_model():
     merged = pd.read_csv("merged.csv")
     pos_to_num = {"QB": 0, "RB": 1, "WR": 2, "TE": 3}
     for draft in drafts:
+        print(draft)
         team_pos_count = np.zeros((4, draft["teams"]))
         merged_year = merged[merged["year"] == int(draft["season"])]
         merged_year = merged_year.sort_values("AVG")
         for pick in draft["picks"]:
             row = pick.copy()
-            print(row)
+            row["team_count"] = draft["teams"]
+            row["season"] = int(draft["season"])
             row["player_position"] = pos_to_num[row["player_position"]]
             merged_year = merged_year.drop(
                 merged_year[merged_year["player_id"] == pick["player_id"]].index
@@ -68,9 +69,9 @@ def train_model():
     print(df)
     X = df.drop(columns="target_score")
     y = df["target_score"]
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
-    )
+    X_train = X[X["season"] < 2024]
+    X_test = X[X["season"] >= 2024]
+    y_train = y[y["season"] < 2024]
     model = LinearRegression()
     model.fit(X_train, y_train)
 
