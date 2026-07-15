@@ -18,7 +18,7 @@ last_request_time = 0.0
 def main():
     # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     # print(len(load_ids("data/good_drafts.txt")))
-    train_model()
+    draft_info()
 
 
 def train_model():
@@ -26,7 +26,12 @@ def train_model():
         drafts = json.load(f)
     rows = []
     merged = pd.read_csv("merged.csv")
-    pos_to_num = {"QB": 0, "RB": 1, "WR": 2, "TE": 3}
+    pos_to_num = {
+        "QB": [1, 0, 0, 0],
+        "RB": [0, 1, 0, 0],
+        "WR": [0, 0, 1, 0],
+        "TE": [0, 0, 0, 1],
+    }
     for draft in drafts:
         print(draft)
         team_pos_count = np.zeros((4, draft["teams"]))
@@ -41,6 +46,7 @@ def train_model():
                 merged_year[merged_year["player_id"] == pick["player_id"]].index
             )
             del row["player_id"]
+            del row["roster_id"]
             row["my_qb_picked"] = team_pos_count[0][pick["roster_id"] - 1]
             row["my_rb_picked"] = team_pos_count[1][pick["roster_id"] - 1]
             row["my_wr_picked"] = team_pos_count[2][pick["roster_id"] - 1]
@@ -68,10 +74,11 @@ def train_model():
     df = pd.DataFrame(rows)
     print(df)
     X = df.drop(columns="target_score")
-    y = df["target_score"]
+    y = df["target_score", "season"]
     X_train = X[X["season"] < 2024]
     X_test = X[X["season"] >= 2024]
     y_train = y[y["season"] < 2024]
+    y_train.drop()
     model = LinearRegression()
     model.fit(X_train, y_train)
 
@@ -94,6 +101,8 @@ def create_merged():
         finish["normal_name"] = finish["player"].apply(normalize_player_name)
         adp["normal_name"] = adp["Player"].apply(normalize_player_name)
         adp = adp[["Player", "AVG", "normal_name"]]
+        finish = finish[["player", "fantasyPts", "position", "normal_name"]]
+        finish = finish[["player", "fantasyPts", "position", "normal_name"]]
         finish = finish[["player", "fantasyPts", "position", "normal_name"]]
         adp["year"] = 2017 + i
         merged = pd.merge(adp, finish, on="normal_name")
@@ -244,7 +253,7 @@ def draft_info():
             continue
         for pick in picks:
             metadata = pick.get("metadata") or {}
-            player_name = metadata.get("first_name") + " " + metadata.get("last_name")
+            player_name = metadata["first_name"] + " " + metadata.get("last_name")
             player_name = normalize_player_name(player_name)
             position = metadata.get("position")
             if position == "K" or position == "DEF":
@@ -252,7 +261,6 @@ def draft_info():
             overall_rank = None
             pos_rank = None
             adp = None
-            print(player_name)
             match = adp_csv[adp_csv["player_id"] == float(pick.get("player_id"))]
             if not match.empty:
                 overall_rank = int(match.index[0]) + 1
@@ -277,7 +285,7 @@ def draft_info():
                 "overall_rank": (overall_rank),
                 "pos_rank": (pos_rank),
             }
-            # print(pick_json)
+            print(pick_json)
             draft_json["picks"].append(pick_json)
         draft_list.append(draft_json)
     Path("data/drafts_metadata.json").write_text(json.dumps(draft_list, indent=2))
@@ -376,8 +384,6 @@ def is_target_league(league):
     settings = league.get("settings") or {}
 
     pos_count = Counter(roster_positions)
-    idp_positions = {"IDP", "IDP_FLEX", "DL", "LB", "DB"}
-    rec = scoring_settings.get("rec")
     pass_td = scoring_settings.get("pass_td")
     num_teams = settings.get("num_teams")
     return (
