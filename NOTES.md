@@ -1,35 +1,52 @@
 # Fantasy Football Draft Data Project Notes
 
-Research date: 2026-06-30
+Last updated: 2026-07-15
 
 ## Goal
 
-Build a dataset for fantasy football draft modeling, similar to the video transcript project.
+Build a contextual draft decision model that recommends the best available player at each pick.
 
 Core modeling question:
 
-What makes a good fantasy football draft pick?
+> Given everything known at this moment in the draft, which available candidate gives this team the best expected final result?
 
-The video framed a good pick as a function of:
+This is not a player-performance prediction model. Player projections, prior-year statistics, team changes, and similar inputs are intentionally delegated to ADP. ADP acts as a strong market prior built from the combined judgment of many fantasy players. The model's job is to learn when draft context should change the ADP ordering.
+
+A good pick is modeled as a function of:
 
 - Player expected performance
 - Positional importance
 - What has happened earlier in the draft
 - What is likely to happen after the pick
 
-The target label in the video was team scoring over the first 12 weeks, not just individual player fantasy points. Reason: the goal is drafting a good team, and later-season team results become less tied to the original draft because of waivers, trades, injuries, and lineup changes.
+Expected behavior:
 
-## Video Method Summary
+- Early rounds should usually stay close to ADP because little team-specific context exists.
+- Later rounds should react more to value, current roster construction, positional runs, league needs, and remaining alternatives.
+- Every available candidate should be scored against the same current draft state.
+- The recommendation should maximize expected team outcome, not individual player points.
 
-The video creator said they used Sleeper because Sleeper makes public fantasy league data available through an API.
+## Modeling Strategy
 
-Reported data scale:
+One training row represents an observed pick:
 
-- Over 500,000 Sleeper leagues accessed from 2018-2023
-- After filtering, roughly 50,000-60,000 useful leagues
-- After more cleanup, about 1.8 million draft picks
+- State immediately before the pick
+- Candidate who was selected
+- State or scarcity implied immediately after selecting that candidate
+- Final team-level outcome used as the label
 
-Likely league filters:
+At inference time:
+
+1. Capture current draft and roster state.
+2. Create one candidate row for every available player.
+3. Simulate selecting each candidate.
+4. Recalculate candidate-specific roster fit and remaining-player scarcity.
+5. Score all candidates.
+6. Recommend the candidate with the highest expected team outcome.
+
+Historical data contains only the action actually taken, not outcomes for every alternative action. The model therefore learns associations between observed decisions and later team success. This is useful, but it is not proof that an unchosen alternative would have performed worse.
+
+Target league filters:
 
 - Redraft leagues only
 - Normal-ish roster settings
@@ -117,16 +134,27 @@ Clean modeling tables later:
 - Player features
 - Team outcome label
 
-## Draft Pick Features From Transcript
+## Draft Pick Features
 
-Player/performance features:
+### Candidate and market-value features
 
 - Overall ADP
-- Positional ADP
-- Years of experience
+- Overall ADP rank
+- Positional rank
 - Position
 
-League context:
+Possible later experiment:
+
+- Years of experience interacted with draft phase. This may distinguish late-round upside bets from stable veterans, but it should only be added after the ADP baseline works.
+
+ADP, overall rank, and positional rank are correlated but not identical:
+
+- ADP preserves distance between players.
+- Overall rank preserves ordering but loses distance.
+- Positional rank describes the candidate relative to alternatives at the same position.
+- A model comparison should test ADP alone, ADP plus positional rank, and all three. Keep extra features only if held-out drafts improve.
+
+### League context
 
 - Number of teams
 - Draft slot
@@ -137,28 +165,54 @@ League context:
 - Number of flex spots
 - Scoring format
 
-Draft state before current pick:
+The first supported formats should remain tightly filtered. Ten-, twelve-, and fourteen-team leagues are similar, but team count still changes the meaning of league-wide raw counts.
 
-- Number of QBs/RBs/WRs/TEs drafted so far
-- Number of players drafted at each position
+### Draft state before current pick
+
+- Raw number of QBs/RBs/WRs/TEs drafted so far
+- Positional picks divided by team count
+- Positional share of all previous picks
 - How many teams have filled required QB/RB/WR/TE/FLEX needs
-- Best available player at each position by ADP
-- Best available overall player by ADP
 - Current team roster construction
-- League-wide positional scarcity
+- Current team starter slots filled by position
+- Current team bench depth by position
+- Positional runs already happening
 
-Possible future-draft approximation:
+Personal position counts are useful as raw counts because roster rules are controlled. League-wide counts should include normalized versions because, for example, 30 drafted WRs means 3.0 per team in a 10-team league but only 2.14 per team in a 14-team league.
 
+### Candidate-specific future context
+
+- Best available player at each position after selecting the candidate
+- Best available overall player after selecting the candidate
 - Remaining teams before next pick
 - Teams likely to need each position
-- ADP gaps between current player and next players at same position
-- Positional runs already happening
+- Candidate ADP gap versus the next player at the same position
+- Candidate value relative to current pick
+- Expected chance that comparable options survive until this team's next pick
+
+The existing `next_best_*` idea is on the right track because it describes what remains after the candidate is removed. Training and live prediction must calculate this feature with identical timing and semantics.
+
+### Required candidate-state interactions
+
+At one live pick, `pick_no`, team position counts, and league position counts are constant for every candidate. These state features cannot change candidate ordering in a plain linear model unless they interact with candidate features.
+
+Important interactions include:
+
+- Candidate position x own count at that position
+- Candidate position x open starter slots at that position
+- Candidate position x league-wide count at that position
+- Candidate position x teams still needing that position
+- Candidate position x next-best value at that position
+- Candidate ADP x pick or round
+- Candidate experience x pick or round
+
+These interactions let the model learn ideas such as "another WR is less useful after this team already drafted four WRs" or "ADP matters more early than late." Alternatives are explicit interaction columns, separate models by draft phase, or a nonlinear model such as gradient-boosted trees. Linear regression remains a useful interpretable baseline.
 
 ## Outcome Label Idea
 
-Target from transcript:
+Preferred target:
 
-- Median team points over weeks 1-12
+- Normalized team scoring over an early-season window, initially weeks 1-12
 
 Why first 12 weeks:
 
@@ -175,9 +229,11 @@ Possible normalization:
 - Median normalized team score over weeks 1-12
 - Percentile rank within league over weeks 1-12
 
+Current weekly within-league z-score direction is good because it compares teams against their actual competition and league format. Compare mean versus median aggregation and 12-week versus longer windows instead of assuming one target is best.
+
 ## ADP Sources
 
-ADP is useful as "wisdom of the crowd" for expected player value.
+ADP is the market's aggregated estimate of player value. Treat it as the model's prior, not literal ground truth. The model should improve candidate decisions by adding roster fit and draft context rather than trying to rebuild player projections.
 
 Sources found:
 
@@ -331,6 +387,73 @@ Important implementation note:
 
 Always store raw API responses or raw normalized tables before cleaning. If a filter or feature is wrong later, raw data avoids needing to crawl again.
 
+## Current Training Function Review
+
+### Good direction
+
+- Uses ADP as player-value baseline instead of attempting a second player projection model.
+- Builds one row per observed decision.
+- Captures current team's position counts before each pick.
+- Captures league-wide position counts before each pick.
+- Removes previously drafted players from the remaining-player pool.
+- Calculates next-best players after removing the current candidate.
+- Uses team-level performance rather than assigning individual fantasy points as the objective.
+- Plans a season-based holdout, which is safer than randomly mixing picks from future seasons into training.
+- Filters league formats, reducing unrelated variation.
+
+### Data and feature pitfalls
+
+- Current sample contains only one 2024 draft, leaving no rows for a `< 2024` training split. Pick rows from one draft are also highly correlated; 155 picks do not equal 155 independent drafts.
+- `overall_rank` currently uses the original DataFrame index after sorting. Values in the thousands show that it is not the intended rank.
+- One missing ADP/rank value will cause `LinearRegression` to reject the feature matrix unless missing values are filtered or imputed.
+- Encoding positions as QB=0, RB=1, WR=2, TE=3 creates a fake numeric ordering. Use categorical encoding or position-specific indicators.
+- `roster_id` is an arbitrary identity and should not become a predictive feature. `draft_slot` has reusable structural meaning; roster number does not.
+- `round`, `pick_no`, and team count partly overlap. This is acceptable for experiments, but held-out evaluation should decide whether each adds value.
+- `season` should not be an input feature. Keep it for chronological splitting and reporting.
+- Raw league-wide positional counts should be paired with per-team or per-pick-share versions for 10-, 12-, and 14-team generalization.
+- The current linear specification lacks candidate-state interactions, so roster context cannot properly change candidate ranking.
+- The same final team target is attached to every pick made by that team. This provides a team-level reward but creates noisy credit assignment and correlated rows.
+
+### Function correctness pitfalls
+
+- Target selection currently uses invalid tuple-style DataFrame indexing.
+- Target filtering and column removal are incomplete.
+- Test labels and evaluation metrics are not yet created.
+- Remaining-position lookup with `.iloc[0]` can fail if no matched player remains at a position.
+- Feature construction for live candidates must exactly match feature construction for historical chosen candidates.
+
+Do not fix all issues by adding complexity at once. First make a valid baseline dataset, train a simple model, and compare it against an ADP-only baseline. Add one feature group at a time and keep it only when held-out drafts improve.
+
+## Evaluation Plan
+
+Primary comparison:
+
+- Baseline: rank available candidates using ADP only.
+- Context model: ADP plus candidate, roster, league, and remaining-player context.
+
+Data splitting:
+
+- Hold out complete future seasons when enough seasons exist.
+- Keep every pick from the same draft in the same split.
+- Never randomly split individual picks across train and test.
+- Report results by league size and draft phase, not only one aggregate metric.
+
+Useful offline checks:
+
+- Team-outcome prediction error versus ADP-only baseline
+- Candidate ranking stability across nearby draft states
+- Recommendation agreement and disagreement with ADP
+- Outcome of observed picks where model strongly disagrees with ADP
+- Performance by early, middle, and late rounds
+- Feature ablations: remove one feature group and measure change
+
+Limits:
+
+- Historical outcomes exist only for selected players, not unchosen alternatives.
+- Team outcomes include injuries, lineup decisions, waivers, trades, and randomness.
+- A lower prediction error does not directly prove recommendations beat skilled human drafting.
+- Live-team results require many drafts and seasons before supporting strong conclusions.
+
 ## Main Risks
 
 - Sleeper crawl may grow slowly without good seed users.
@@ -341,6 +464,8 @@ Always store raw API responses or raw normalized tables before cleaning. If a fi
 - Team points include manager behavior after draft: starts, waivers, trades, injuries.
 - ADP data must match the correct season and scoring format.
 - Need avoid using information unavailable at draft time.
+- Historical managers usually follow ADP, limiting examples of successful deviations from ADP.
+- A flexible model can learn quirks of league size, draft year, or manager behavior instead of reusable strategy.
 
 ## First Milestone
 
@@ -381,11 +506,39 @@ Add modeling features:
 - Add team roster construction before each pick
 - Add positional scarcity features
 
+Success criteria:
+
+- Historical and live candidate features use identical calculations.
+- Position is encoded categorically.
+- Candidate-state interactions allow roster needs to change candidate ranking.
+- Overall rank is computed within the sorted season, not from the original DataFrame index.
+
+## Fourth Milestone
+
+Train and evaluate candidate scorers:
+
+1. Build an ADP-only baseline.
+2. Train an interpretable linear baseline with explicit interactions.
+3. Compare against a nonlinear model after dataset is large enough.
+4. Hold out complete drafts and future seasons.
+5. Measure feature groups with ablation tests.
+6. Simulate live picks by scoring every available candidate.
+
+Success criteria:
+
+- Context model beats ADP-only baseline on held-out team-outcome prediction.
+- Recommendations change when roster or remaining-player context changes.
+- Early-round recommendations remain more ADP-driven than later-round recommendations.
+- Results remain reasonable across 10-, 12-, and 14-team leagues.
+
 ## Open Questions
 
 - Which seasons should be included first?
 - Redraft only, or include keeper/dynasty later?
 - PPR only, half-PPR, standard, or all with scoring normalization?
-- Should outcome be total points, median weekly score, win rate, or playoff rate?
-- Should model predict pick value, full-team outcome, or next-best-pick comparison?
+- Should outcome use mean weekly z-score, median weekly z-score, percentile, or another normalized early-season team score?
+- Is weeks 1-12 the best balance between outcome stability and draft attribution?
+- Which explicit interactions are enough for the linear baseline?
+- Does a nonlinear model materially outperform the interpretable baseline?
+- How should missing historical ADP players be handled?
 - How many leagues are enough for first useful experiment?
