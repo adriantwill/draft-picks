@@ -31,10 +31,10 @@ def train_model():
     rows: list[dict[str, Any]] = []
     merged = pd.read_csv("merged.csv")
     pos_to_num = {
-        "QB": [1, 0, 0, 0],
-        "RB": [0, 1, 0, 0],
-        "WR": [0, 0, 1, 0],
-        "TE": [0, 0, 0, 1],
+        "QB": 0,
+        "RB": 1,
+        "WR": 2,
+        "TE": 3,
     }
     for draft in drafts:
         print(draft)
@@ -45,12 +45,16 @@ def train_model():
             row: dict[str, Any] = dict(pick)
             row["team_count"] = draft["teams"]
             row["season"] = int(draft["season"])
-            row["player_position"] = pos_to_num[pick["player_position"]]
+            row["is_qb"] = 1 if pick["player_position"] == "QB" else 0
+            row["is_rb"] = 1 if pick["player_position"] == "RB" else 0
+            row["is_wr"] = 1 if pick["player_position"] == "WR" else 0
+            row["is_te"] = 1 if pick["player_position"] == "TE" else 0
             merged_year = merged_year.drop(
-                merged_year[merged_year["player_id"] == pick["player_id"]].index
+                merged_year[str(merged_year["player_id"]) == pick["player_id"]].index
             )
             del row["player_id"]
             del row["roster_id"]
+            del row["position"]
             row["my_qb_picked"] = team_pos_count[0][pick["roster_id"] - 1]
             row["my_rb_picked"] = team_pos_count[1][pick["roster_id"] - 1]
             row["my_wr_picked"] = team_pos_count[2][pick["roster_id"] - 1]
@@ -85,20 +89,29 @@ def train_model():
                 1
             ]["AVG"]
             row["target_score"] = draft["scores"][pick["roster_id"] - 1]
-            # row['wr_per_team'] = sum(team_pos_count[2]) / draft['teams']
-            # row['wr_picked_normalized'] = sum(team_pos_count[2]) / row['pick']  #TODO repeat for every position
-            # row['wr_gap'] =  row["second_best_wr"] - row["next_best_wr"]
-            team_pos_count[row["player_position"]][pick["roster_id"] - 1] += 1
-
+            row["pos_gap"] = (
+                row[f"next_best_{pick['player_position'].lower()}"] - pick["adp"]
+            )
+            row["wr_per_team"] = sum(team_pos_count[2]) / draft["teams"]
+            row["wr_picked_normalized"] = sum(team_pos_count[2]) / row["pick_no"]
+            row["rb_per_team"] = sum(team_pos_count[1]) / draft["teams"]
+            row["rb_picked_normalized"] = sum(team_pos_count[1]) / row["pick_no"]
+            row["qb_per_team"] = sum(team_pos_count[0]) / draft["teams"]
+            row["qb_picked_normalized"] = sum(team_pos_count[0]) / row["pick_no"]
+            row["te_per_team"] = sum(team_pos_count[3]) / draft["teams"]
+            row["te_picked_normalized"] = sum(team_pos_count[3]) / row["pick_no"]
+            team_pos_count[pos_to_num[pick["player_position"]]][
+                pick["roster_id"] - 1
+            ] += 1
             rows.append(row)
     df = pd.DataFrame(rows)
     print(df)
     X = df.drop(columns="target_score")
     y = df["target_score", "season"]
     X_train = X[X["season"] < 2024]
-    X_test = X[X["season"] >= 2024]
     y_train = y[y["season"] < 2024]
-    y_train.drop()
+    y_train = df.drop(columns="season")
+    X_train = df.drop(columns="season")
     model = LinearRegression()
     model.fit(X_train, y_train)
 
@@ -132,6 +145,10 @@ def create_merged():
         else:
             adp_finish = pd.concat([adp_finish, merged], ignore_index=True)
     expected_points(adp_finish).to_csv("merged.csv", index=False)
+
+
+#  - Current target multiplies team z-score by drafted-starter retention at main.py:190. This creates
+#    odd behavior: a bad team with fewer drafted starters gets pulled toward zero and looks less bad.
 
 
 def draft_impact(draft: Draft, all_players: AllPlayers) -> Draft:
@@ -253,7 +270,7 @@ def draft_info():
             match = adp_csv[adp_csv["player_id"] == float(pick.get("player_id"))]
             if not match.empty:
                 overall_rank = int(match.index[0]) + 1
-                pos_rank = int(match.iloc[0]["pos_rank"]) + 1
+                pos_rank = int(match.iloc[0]["pos_rank"])
                 adp = match.reset_index().at[0, "AVG"]
             pick_json: DraftPick = {
                 "pick_no": pick.get("pick_no"),
