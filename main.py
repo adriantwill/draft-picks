@@ -1,25 +1,126 @@
 import json
-import time
-from collections import Counter, defaultdict, deque
+import re
+from collections import defaultdict
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd
-import requests
+from sklearn.linear_model import LinearRegression
 
-REQUESTS_PER_MINUTE = 600
-SECONDS_PER_REQUEST = 60 / REQUESTS_PER_MINUTE
-
-last_request_time = 0.0
+from data_types import (
+    AllPlayers,
+    Draft,
+    DraftPick,
+    PlayerId,
+    PlayerImpact,
+    SleeperMatchup,
+)
+from util import load_ids, sleeper_get
 
 
 def main():
     # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-    print(len(load_ids("data/good_drafts.txt")))
-    # draft_impact()
-    create_merged()
+    # print(len(load_ids("data/good_drafts.txt")))
+    draft_info()
+
+
+def train_model():
+    with open("data/drafts_metadata.json", "r") as f:
+        drafts: list[Draft] = json.load(f)
+    rows: list[dict[str, Any]] = []
     merged = pd.read_csv("merged.csv")
-    print(expected_points(merged))
+    pos_to_num = {
+        "QB": 0,
+        "RB": 1,
+        "WR": 2,
+        "TE": 3,
+    }
+    for draft in drafts:
+        print(draft)
+        team_pos_count = np.zeros((4, draft["teams"]))
+        merged_year = merged[merged["year"] == int(draft["season"])]
+        merged_year = merged_year.sort_values("AVG")
+        for pick in draft["picks"]:
+            row: dict[str, Any] = dict(pick)
+            row["team_count"] = draft["teams"]
+            row["season"] = int(draft["season"])
+            row["is_qb"] = 1 if pick["player_position"] == "QB" else 0
+            row["is_rb"] = 1 if pick["player_position"] == "RB" else 0
+            row["is_wr"] = 1 if pick["player_position"] == "WR" else 0
+            row["is_te"] = 1 if pick["player_position"] == "TE" else 0
+            merged_year = merged_year.drop(
+                merged_year[str(merged_year["player_id"]) == pick["player_id"]].index
+            )
+            del row["player_id"]
+            del row["roster_id"]
+            del row["position"]
+            row["my_qb_picked"] = team_pos_count[0][pick["roster_id"] - 1]
+            row["my_rb_picked"] = team_pos_count[1][pick["roster_id"] - 1]
+            row["my_wr_picked"] = team_pos_count[2][pick["roster_id"] - 1]
+            row["my_te_picked"] = team_pos_count[3][pick["roster_id"] - 1]
+            row["qb_picked"] = sum(team_pos_count[0])
+            row["rb_picked"] = sum(team_pos_count[1])
+            row["wr_picked"] = sum(team_pos_count[2])
+            row["te_picked"] = sum(team_pos_count[3])
+
+            row["next_best_qb"] = merged_year[merged_year["position"] == "QB"].iloc[0][
+                "AVG"
+            ]
+            row["next_best_rb"] = merged_year[merged_year["position"] == "RB"].iloc[0][
+                "AVG"
+            ]
+            row["next_best_wr"] = merged_year[merged_year["position"] == "WR"].iloc[0][
+                "AVG"
+            ]
+            row["next_best_te"] = merged_year[merged_year["position"] == "TE"].iloc[0][
+                "AVG"
+            ]
+            row["second_best_qb"] = merged_year[merged_year["position"] == "QB"].iloc[
+                1
+            ]["AVG"]
+            row["second_best_rb"] = merged_year[merged_year["position"] == "RB"].iloc[
+                1
+            ]["AVG"]
+            row["second_best_wr"] = merged_year[merged_year["position"] == "WR"].iloc[
+                1
+            ]["AVG"]
+            row["second_best_te"] = merged_year[merged_year["position"] == "TE"].iloc[
+                1
+            ]["AVG"]
+            row["target_score"] = draft["scores"][pick["roster_id"] - 1]
+            row["pos_gap"] = (
+                row[f"next_best_{pick['player_position'].lower()}"] - pick["adp"]
+            )
+            row["wr_per_team"] = sum(team_pos_count[2]) / draft["teams"]
+            row["wr_picked_normalized"] = sum(team_pos_count[2]) / row["pick_no"]
+            row["rb_per_team"] = sum(team_pos_count[1]) / draft["teams"]
+            row["rb_picked_normalized"] = sum(team_pos_count[1]) / row["pick_no"]
+            row["qb_per_team"] = sum(team_pos_count[0]) / draft["teams"]
+            row["qb_picked_normalized"] = sum(team_pos_count[0]) / row["pick_no"]
+            row["te_per_team"] = sum(team_pos_count[3]) / draft["teams"]
+            row["te_picked_normalized"] = sum(team_pos_count[3]) / row["pick_no"]
+            team_pos_count[pos_to_num[pick["player_position"]]][
+                pick["roster_id"] - 1
+            ] += 1
+            rows.append(row)
+    df = pd.DataFrame(rows)
+    print(df)
+    X = df.drop(columns="target_score")
+    y = df["target_score", "season"]
+    X_train = X[X["season"] < 2024]
+    y_train = y[y["season"] < 2024]
+    y_train = df.drop(columns="season")
+    X_train = df.drop(columns="season")
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+
+
+def normalize_player_name(name: str) -> str:
+    name = str(name).lower()
+    name = re.sub(r"\b(jr|sr|ii|iii|iv|v)\b\.?", "", name)
+    name = re.sub(r"[^a-z0-9]+", "", name)
+    return name
 
 
 def create_merged():
@@ -27,99 +128,78 @@ def create_merged():
     for i in range(8):
         adp = pd.read_csv(f"adp/FantasyPros_{2017 + i}_Overall_ADP_Rankings.csv")
         finish = pd.read_csv(f"finsh/receiving_finish_{2017 + i}.csv")
-        adp = adp[["Player", "AVG"]]
-        finish = finish[["player", "fantasyPts", "position"]]
-        finish = finish.rename(columns={"player": "Player"})
+        qb_finish = pd.read_csv(f"finsh/passing_finish_{2017 + i}.csv")
+        qb_finish["position"] = "QB"
+        finish = pd.concat([finish, qb_finish], ignore_index=True)
+        finish["normal_name"] = finish["player"].apply(normalize_player_name)
+        adp["normal_name"] = adp["Player"].apply(normalize_player_name)
+        adp = adp[["Player", "AVG", "normal_name"]]
+        finish = finish[["player", "fantasyPts", "position", "normal_name"]]
+        finish = finish[["player", "fantasyPts", "position", "normal_name"]]
+        finish = finish[["player", "fantasyPts", "position", "normal_name"]]
         adp["year"] = 2017 + i
-        clean_data([adp, finish])
-        merged = pd.merge(adp, finish, on="Player")
+        merged = pd.merge(adp, finish, on="normal_name")
+        merged = merged.drop(columns=["Player", "normal_name"])
         if adp_finish.empty:
             adp_finish = merged
         else:
             adp_finish = pd.concat([adp_finish, merged], ignore_index=True)
-    adp_finish.to_csv("merged.csv", index=False)
+    expected_points(adp_finish).to_csv("merged.csv", index=False)
 
 
-def clean_data(
-    dataframes: list[pd.DataFrame],
-):
-    for df in dataframes:
-        df["Player"] = df["Player"].str.replace(" Jr.", "", regex=False)
-        df["Player"] = df["Player"].str.replace(" Sr.", "", regex=False)
-        df["Player"] = df["Player"].str.replace(" III", "", regex=False)
-        df["Player"] = df["Player"].str.replace(" II", "", regex=False)
-        df["Player"] = df["Player"].str.replace(" IV", "", regex=False)
-        df["Player"] = df["Player"].str.strip()
+#  - Current target multiplies team z-score by drafted-starter retention at main.py:190. This creates
+#    odd behavior: a bad team with fewer drafted starters gets pulled toward zero and looks less bad.
 
 
-def sleeper_get(url: str, retries: int = 3):
-    for attempt in range(retries):
-        try:
-            response = requests.get(url, timeout=20)
-            response.raise_for_status()
-            return response.json()
-
-        except (requests.exceptions.RequestException, ValueError) as e:
-            print("request failed, retrying", attempt + 1, type(e).__name__, url)
-            time.sleep(5 * (attempt + 1))
-
-    print("failed after retries", url)
-    return None
-
-
-def draft_impact():
-    with Path("data/drafts_metadata.json").open(encoding="utf-8") as f:
-        drafts = json.load(f)
-    with Path("nfl.json").open(encoding="utf-8") as f:
-        all_players = json.load(f)
+def draft_impact(draft: Draft, all_players: AllPlayers) -> Draft:
+    player_impact: PlayerImpact = defaultdict(int)
     team_size = 7
-    for draft in drafts:
-        player_impact = defaultdict(int)
-        total_points = np.zeros(draft["teams"])
-        weekly_team_z = np.zeros(draft["teams"])
-        player_roster = {}
-        for i in range(1, 18):
-            weekly_team_points = np.zeros(draft["teams"])
-            start_ratio = np.zeros(draft["teams"])
-            matchups = sleeper_get(
-                f"https://api.sleeper.app/v1/league/{draft['league_id']}/matchups/{i}"
-            )
-            for matchup in matchups:
-                roster = matchup["roster_id"]
-                points = matchup["points"]
-                for i, pos in enumerate(["DEF", "K"]):
-                    points -= (
-                        matchup["starters_points"][-i - 1]
-                        if matchup["starters"][-i - 1] in all_players
-                        and all_players[matchup["starters"][-i - 1]]["position"] == pos
-                        else 0
-                    )
-                roster_list = [
-                    pick["player_id"]
-                    for pick in draft["picks"]
-                    if pick["roster_id"] == roster
-                ]
-                draft_starter_count = 0
-                for starter in matchup["starters"]:
-                    if starter in roster_list:
-                        player_roster[starter] = roster
-                        draft_starter_count += 1
-                        player_impact[starter] += matchup["players_points"][starter]
-                start_ratio[roster - 1] = draft_starter_count / team_size
-                total_points[roster - 1] += points
-                weekly_team_points[roster - 1] = points
-            week_z = (weekly_team_points - np.mean(weekly_team_points)) / np.std(
-                weekly_team_points
-            )
-            weekly_team_z += week_z * start_ratio
 
-        weekly_team_z /= 17
-        for pid in player_impact:
-            roster = player_roster[pid]
-            player_impact[pid] /= total_points[roster - 1]
-        draft["scores"] = list(weekly_team_z)
-        draft["player_impact"] = player_impact
-    Path("data/drafts_metadata_temp.json").write_text(json.dumps(drafts, indent=2))
+    total_points = np.zeros(draft["teams"])
+    weekly_team_z = np.zeros(draft["teams"])
+    player_roster: dict[PlayerId, int] = {}
+    for i in range(1, 18):
+        weekly_team_points = np.zeros(draft["teams"])
+        start_ratio = np.zeros(draft["teams"])
+        matchups: list[SleeperMatchup] = sleeper_get(
+            f"https://api.sleeper.app/v1/league/{draft['league_id']}/matchups/{i}"
+        )
+        for matchup in matchups:
+            roster = matchup["roster_id"]
+            points = matchup["points"]
+            for i, pos in enumerate(["DEF", "K"]):
+                points -= (
+                    matchup["starters_points"][-i - 1]
+                    if matchup["starters"][-i - 1] in all_players
+                    and all_players[matchup["starters"][-i - 1]]["position"] == pos
+                    else 0
+                )
+            roster_list = [
+                pick["player_id"]
+                for pick in draft["picks"]
+                if pick["roster_id"] == roster
+            ]
+            draft_starter_count = 0
+            for starter in matchup["starters"]:
+                if starter in roster_list:
+                    player_roster[starter] = roster
+                    draft_starter_count += 1
+                    player_impact[starter] += matchup["players_points"][starter]
+            start_ratio[roster - 1] = draft_starter_count / team_size
+            total_points[roster - 1] += points
+            weekly_team_points[roster - 1] = points
+        week_z = (weekly_team_points - np.mean(weekly_team_points)) / np.std(
+            weekly_team_points
+        )
+        weekly_team_z += week_z * start_ratio
+
+    weekly_team_z /= 17
+    for pid in player_impact:
+        roster = player_roster[pid]
+        player_impact[pid] /= total_points[roster - 1]
+    draft["scores"] = list(weekly_team_z)
+    draft["player_impact"] = player_impact
+    return draft
 
 
 def expected_points(df: pd.DataFrame) -> pd.DataFrame:
@@ -136,222 +216,77 @@ def expected_points(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def name_to_id():
+    players = pd.read_json("nfl.json").T
+    players = players.drop_duplicates(
+        subset=["search_full_name", "position"],
+        keep="first",
+    )
+    merged = pd.read_csv("merged.csv")
+    merged["search_full_name"] = merged["player"].apply(normalize_player_name)
+    merged = merged.merge(
+        players[["search_full_name", "position", "player_id"]],
+        on=["search_full_name", "position"],
+        how="left",
+    )
+    merged = merged.drop(columns=["search_full_name"])
+    merged.to_csv("merged.csv", index=False)
+
+
 def draft_info():
     good_drafts = load_ids("data/good_drafts.txt")
-    draft_list = []
-    for i, draft in enumerate(good_drafts):
-        if i > 0:
-            break
+    with Path("nfl.json").open(encoding="utf-8") as f:
+        all_players: AllPlayers = json.load(f)
+    good_drafts = ["1125986091942735872"]
+    draft_list: list[Draft] = []
+    merged_csv = pd.read_csv("merged.csv")
+    for draft in good_drafts:
         response = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}")
         if not response:
             continue
-        draft_json = {
+        draft_json: Draft = {
             "league_id": response.get("league_id"),
             "draft_id": response.get("draft_id"),
             "teams": response.get("settings", {}).get("teams"),
             "season": response.get("season"),
             "picks": [],
         }
-        adp_csv = pd.read_csv(
-            f"adp/FantasyPros_{draft_json['season']}_Overall_ADP_Rankings.csv"
-        )
-        clean_data([adp_csv])
-        adp_csv = adp_csv.sort_values("AVG")
+        adp_csv = merged_csv[(merged_csv["year"]) == int(response.get("season"))]
+        adp_csv = adp_csv.sort_values("AVG").reset_index(drop=True)
+        adp_csv["pos_rank"] = adp_csv.groupby("position").cumcount() + 1
         picks = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}/picks")
         if not picks:
             continue
         for pick in picks:
             metadata = pick.get("metadata") or {}
-            player_name = metadata.get("first_name") + " " + metadata.get("last_name")
+            player_name = metadata["first_name"] + " " + metadata.get("last_name")
+            player_name = normalize_player_name(player_name)
             position = metadata.get("position")
             if position == "K" or position == "DEF":
                 continue
             overall_rank = None
             pos_rank = None
             adp = None
-            if len(adp_csv[adp_csv["Player"] == player_name]) > 0:
-                overall_rank = (
-                    int(adp_csv[adp_csv["Player"] == player_name].index[0]) + 1
-                )
-                pos_df = adp_csv[adp_csv["POS"].str[:2] == position].reset_index(
-                    drop=True
-                )
-                pos_rank = int(pos_df[pos_df["Player"] == player_name].index[0]) + 1
-
-                adp = float(
-                    adp_csv.loc[
-                        (adp_csv["Player"] == player_name)
-                        & (adp_csv["POS"].str[:2] == position)
-                    ]["AVG"].iloc[0]
-                )
-            pick_json = {
+            match = adp_csv[adp_csv["player_id"] == float(pick.get("player_id"))]
+            if not match.empty:
+                overall_rank = int(match.index[0]) + 1
+                pos_rank = int(match.iloc[0]["pos_rank"])
+                adp = match.reset_index().at[0, "AVG"]
+            pick_json: DraftPick = {
                 "pick_no": pick.get("pick_no"),
                 "round": pick.get("round"),
                 "draft_slot": pick.get("draft_slot"),
                 "roster_id": pick.get("roster_id"),
                 "player_id": pick.get("player_id"),
                 "player_position": metadata.get("position"),
-                "player_team": metadata.get("team"),
                 "adp": (adp),
                 "overall_rank": (overall_rank),
                 "pos_rank": (pos_rank),
             }
-            # print(pick_json)
+            print(pick_json)
             draft_json["picks"].append(pick_json)
-        draft_list.append(draft_json)
+        draft_list.append(draft_impact(draft_json, all_players))
     Path("data/drafts_metadata.json").write_text(json.dumps(draft_list, indent=2))
-
-
-def bfs_leagues():
-    seed_users = [
-        "jjzachariason",
-        "justinboone",
-        "jeffratcliffe",
-        "lordreebs",
-        "joshlarky",
-        "adamrank",
-        "ryanhallam",
-        "kaceykasem",
-        "ryanmcdowell",
-        "scottfish24",
-        "scottfish",
-        "theffballers",
-        "andyholloway",
-        "mikewright",
-        "salpal2",
-        "joebond",
-    ]
-    user_ids = []
-    for seed in seed_users:
-        user = requests.get(f"https://api.sleeper.app/v1/user/{seed}", timeout=10)
-        user_ids.append(user.json()["user_id"])
-    seen_leagues = load_ids("data/seen_leagues.txt")
-    good_drafts = load_ids("data/good_drafts.txt")
-    seen_users = load_ids("data/seen_users.txt") | set(user_ids)
-    pending_users = load_ids("data/pending_users.txt")
-    q = deque(pending_users or user_ids)
-
-    try:
-        years = [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
-        req_count = 0
-        while q:
-            last_user = q.pop()
-            # if last_user in seen_users:
-            #     continue
-            for year in years:
-                last_league = sleeper_get(
-                    f"https://api.sleeper.app/v1/user/{last_user}/leagues/nfl/{year}",
-                )
-                if not last_league:
-                    continue
-                req_count += 1
-                if req_count % 100 == 0:
-                    save_seen_files(seen_leagues, good_drafts, seen_users, q)
-                for league in last_league:
-                    league_id = league["league_id"]
-                    if league_id in seen_leagues or not is_target_league(league):
-                        continue
-                    seen_leagues.add(league_id)
-                    draft_id = league["draft_id"]
-                    draft = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft_id}")
-                    req_count += 1
-                    if draft and is_good_draft(draft, league):
-                        good_drafts.add(draft_id)
-                        print(draft_id)
-                    users = sleeper_get(
-                        f"https://api.sleeper.app/v1/league/{league_id}/users"
-                    )
-                    if not users:
-                        continue
-                    req_count += 1
-                    for user in users:
-                        user_id = user["user_id"]
-                        if user_id in seen_users:
-                            continue
-                        seen_users.add(user_id)
-                        q.append(user_id)
-    finally:
-        save_seen_files(seen_leagues, good_drafts, seen_users, q)
-
-
-def load_ids(path: str) -> set[str]:
-    file = Path(path)
-    if not file.exists():
-        return set()
-    return set(file.read_text().splitlines())
-
-
-def save_seen_files(seen_leagues: set, good_drafts: set, seen_users: set, q: deque):
-    Path("data").mkdir(exist_ok=True)
-    Path("data/seen_leagues.txt").write_text("\n".join(seen_leagues) + "\n")
-    Path("data/good_drafts.txt").write_text("\n".join(good_drafts) + "\n")
-    Path("data/seen_users.txt").write_text("\n".join(map(str, seen_users)) + "\n")
-    Path("data/pending_users.txt").write_text("\n".join(map(str, q)) + "\n")
-
-
-def is_target_league(league):
-    roster_positions = league.get("roster_positions") or []
-    scoring_settings = league.get("scoring_settings") or {}
-    settings = league.get("settings") or {}
-
-    pos_count = Counter(roster_positions)
-    idp_positions = {"IDP", "IDP_FLEX", "DL", "LB", "DB"}
-    rec = scoring_settings.get("rec")
-    pass_td = scoring_settings.get("pass_td")
-    num_teams = settings.get("num_teams")
-    return (
-        league.get("sport") == "nfl"
-        and league.get("season_type") == "regular"
-        and league.get("status") in {"in_season", "complete"}
-        and league.get("draft_id") is not None
-        and settings.get("best_ball") == 0
-        and settings.get("type") == 0
-        and rec is not None
-        # and rec >= 0.5
-        and rec == 1.0
-        and pass_td is not None
-        and pass_td == 4.0
-        and pos_count["QB"] == 1
-        and pos_count["RB"] == 2
-        and pos_count["WR"] == 2
-        and pos_count["TE"] == 1
-        and pos_count["K"] <= 1
-        and pos_count["DEF"] <= 1
-        # and pos_count["FLEX"] <= 2
-        and pos_count["FLEX"] == 1
-        and "SUPER_FLEX" not in pos_count
-        and idp_positions.isdisjoint(pos_count)
-        and num_teams is not None
-        and num_teams >= 10
-        and num_teams <= 12
-    )
-
-
-def is_good_draft(draft, league):
-    settings = draft.get("settings") or {}
-    league_settings = league.get("settings") or {}
-    teams = settings.get("teams")
-    flex = settings.get("slots_flex")
-
-    return (
-        draft.get("status") == "complete"
-        and draft.get("type") == "snake"
-        and draft.get("sport") == "nfl"
-        and draft.get("season_type") == "regular"
-        and draft.get("league_id") == league.get("league_id")
-        and teams == league_settings.get("num_teams")
-        and teams is not None
-        and teams >= 10
-        and teams <= 14
-        and settings.get("slots_qb") == 1
-        and settings.get("slots_rb") == 2
-        and settings.get("slots_wr") == 2
-        and settings.get("slots_te") == 1
-        and flex is not None
-        and flex >= 1
-        and flex <= 2
-        and settings.get("slots_super_flex", 0) == 0
-    )
 
 
 if __name__ == "__main__":
