@@ -2,12 +2,20 @@ import json
 import re
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict
+from typing import Any
 
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 
+from data_types import (
+    AllPlayers,
+    Draft,
+    DraftPick,
+    PlayerId,
+    PlayerImpact,
+    SleeperMatchup,
+)
 from util import load_ids, sleeper_get
 
 
@@ -19,8 +27,8 @@ def main():
 
 def train_model():
     with open("data/drafts_metadata.json", "r") as f:
-        drafts = json.load(f)
-    rows = []
+        drafts: list[Draft] = json.load(f)
+    rows: list[dict[str, Any]] = []
     merged = pd.read_csv("merged.csv")
     pos_to_num = {
         "QB": [1, 0, 0, 0],
@@ -34,10 +42,10 @@ def train_model():
         merged_year = merged[merged["year"] == int(draft["season"])]
         merged_year = merged_year.sort_values("AVG")
         for pick in draft["picks"]:
-            row = pick.copy()
+            row: dict[str, Any] = dict(pick)
             row["team_count"] = draft["teams"]
             row["season"] = int(draft["season"])
-            row["player_position"] = pos_to_num[row["player_position"]]
+            row["player_position"] = pos_to_num[pick["player_position"]]
             merged_year = merged_year.drop(
                 merged_year[merged_year["player_id"] == pick["player_id"]].index
             )
@@ -126,17 +134,17 @@ def create_merged():
     expected_points(adp_finish).to_csv("merged.csv", index=False)
 
 
-def draft_impact(draft: Dict, all_players) -> Dict:
-    player_impact = defaultdict(int)
+def draft_impact(draft: Draft, all_players: AllPlayers) -> Draft:
+    player_impact: PlayerImpact = defaultdict(int)
     team_size = 7
 
     total_points = np.zeros(draft["teams"])
     weekly_team_z = np.zeros(draft["teams"])
-    player_roster = {}
+    player_roster: dict[PlayerId, int] = {}
     for i in range(1, 18):
         weekly_team_points = np.zeros(draft["teams"])
         start_ratio = np.zeros(draft["teams"])
-        matchups = sleeper_get(
+        matchups: list[SleeperMatchup] = sleeper_get(
             f"https://api.sleeper.app/v1/league/{draft['league_id']}/matchups/{i}"
         )
         for matchup in matchups:
@@ -211,15 +219,15 @@ def name_to_id():
 def draft_info():
     good_drafts = load_ids("data/good_drafts.txt")
     with Path("nfl.json").open(encoding="utf-8") as f:
-        all_players = json.load(f)
+        all_players: AllPlayers = json.load(f)
     good_drafts = ["1125986091942735872"]
-    draft_list = []
+    draft_list: list[Draft] = []
     merged_csv = pd.read_csv("merged.csv")
     for draft in good_drafts:
         response = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}")
         if not response:
             continue
-        draft_json = {
+        draft_json: Draft = {
             "league_id": response.get("league_id"),
             "draft_id": response.get("draft_id"),
             "teams": response.get("settings", {}).get("teams"),
@@ -247,7 +255,7 @@ def draft_info():
                 overall_rank = int(match.index[0]) + 1
                 pos_rank = int(match.iloc[0]["pos_rank"]) + 1
                 adp = match.reset_index().at[0, "AVG"]
-            pick_json = {
+            pick_json: DraftPick = {
                 "pick_no": pick.get("pick_no"),
                 "round": pick.get("round"),
                 "draft_slot": pick.get("draft_slot"),
