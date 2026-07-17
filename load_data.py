@@ -3,7 +3,11 @@ from pathlib import Path
 
 import requests
 
-from main import load_ids, sleeper_get
+from util import load_ids, sleeper_get
+
+
+def main():
+    bfs_leagues()
 
 
 def bfs_leagues():
@@ -39,25 +43,30 @@ def bfs_leagues():
         years = [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
         req_count = 0
         while q:
-            last_user = q.pop()
+            last_user = q[0]
+
             # if last_user in seen_users:
             #     continue
+            bad_league_response = False
             for year in years:
                 last_league = sleeper_get(
                     f"https://api.sleeper.app/v1/user/{last_user}/leagues/nfl/{year}",
                 )
                 if not last_league:
+                    if last_league is None:
+                        bad_league_response = True
                     continue
                 req_count += 1
-                if req_count % 100 == 0:
-                    save_seen_files(seen_leagues, good_drafts, seen_users, q)
                 for league in last_league:
                     league_id = league["league_id"]
                     if league_id in seen_leagues or not is_target_league(league):
                         continue
-                    seen_leagues.add(league_id)
                     draft_id = league["draft_id"]
                     draft = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft_id}")
+                    if not draft:
+                        if draft is None:
+                            bad_league_response = True
+                        continue
                     req_count += 1
                     if draft and is_good_draft(draft, league):
                         good_drafts.add(draft_id)
@@ -66,6 +75,8 @@ def bfs_leagues():
                         f"https://api.sleeper.app/v1/league/{league_id}/users"
                     )
                     if not users:
+                        if users is None:
+                            bad_league_response = True
                         continue
                     req_count += 1
                     for user in users:
@@ -74,6 +85,11 @@ def bfs_leagues():
                             continue
                         seen_users.add(user_id)
                         q.append(user_id)
+                    seen_leagues.add(league_id)
+            q.popleft()
+            if bad_league_response:
+                q.append(last_user)
+            save_seen_files(seen_leagues, good_drafts, seen_users, q)
     finally:
         save_seen_files(seen_leagues, good_drafts, seen_users, q)
 
@@ -149,3 +165,7 @@ def is_good_draft(draft, league):
         and flex <= 2
         and settings.get("slots_super_flex", 0) == 0
     )
+
+
+if __name__ == "__main__":
+    main()

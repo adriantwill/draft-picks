@@ -1,18 +1,14 @@
 import json
 import re
-import time
 from collections import defaultdict
 from pathlib import Path
+from typing import Dict
 
 import numpy as np
 import pandas as pd
-import requests
 from sklearn.linear_model import LinearRegression
 
-REQUESTS_PER_MINUTE = 600
-SECONDS_PER_REQUEST = 60 / REQUESTS_PER_MINUTE
-
-last_request_time = 0.0
+from util import load_ids, sleeper_get
 
 
 def main():
@@ -47,7 +43,6 @@ def train_model():
             )
             del row["player_id"]
             del row["roster_id"]
-            del row["season"]
             row["my_qb_picked"] = team_pos_count[0][pick["roster_id"] - 1]
             row["my_rb_picked"] = team_pos_count[1][pick["roster_id"] - 1]
             row["my_wr_picked"] = team_pos_count[2][pick["roster_id"] - 1]
@@ -131,77 +126,55 @@ def create_merged():
     expected_points(adp_finish).to_csv("merged.csv", index=False)
 
 
-def sleeper_get(url: str, retries: int = 3):
-    for attempt in range(retries):
-        try:
-            response = requests.get(
-                url,
-                timeout=20,  # verify=False
-            )
-            response.raise_for_status()
-            return response.json()
-
-        except (requests.exceptions.RequestException, ValueError) as e:
-            print("request failed, retrying", attempt + 1, type(e).__name__, url)
-            time.sleep(5 * (attempt + 1))
-
-    print("failed after retries", url)
-    return None
-
-
-def draft_impact():
-    with Path("data/drafts_metadata.json").open(encoding="utf-8") as f:
-        drafts = json.load(f)
-    with Path("nfl.json").open(encoding="utf-8") as f:
-        all_players = json.load(f)
+def draft_impact(draft: Dict, all_players) -> Dict:
+    player_impact = defaultdict(int)
     team_size = 7
-    for draft in drafts:
-        player_impact = defaultdict(int)
-        total_points = np.zeros(draft["teams"])
-        weekly_team_z = np.zeros(draft["teams"])
-        player_roster = {}
-        for i in range(1, 18):
-            weekly_team_points = np.zeros(draft["teams"])
-            start_ratio = np.zeros(draft["teams"])
-            matchups = sleeper_get(
-                f"https://api.sleeper.app/v1/league/{draft['league_id']}/matchups/{i}"
-            )
-            for matchup in matchups:
-                roster = matchup["roster_id"]
-                points = matchup["points"]
-                for i, pos in enumerate(["DEF", "K"]):
-                    points -= (
-                        matchup["starters_points"][-i - 1]
-                        if matchup["starters"][-i - 1] in all_players
-                        and all_players[matchup["starters"][-i - 1]]["position"] == pos
-                        else 0
-                    )
-                roster_list = [
-                    pick["player_id"]
-                    for pick in draft["picks"]
-                    if pick["roster_id"] == roster
-                ]
-                draft_starter_count = 0
-                for starter in matchup["starters"]:
-                    if starter in roster_list:
-                        player_roster[starter] = roster
-                        draft_starter_count += 1
-                        player_impact[starter] += matchup["players_points"][starter]
-                start_ratio[roster - 1] = draft_starter_count / team_size
-                total_points[roster - 1] += points
-                weekly_team_points[roster - 1] = points
-            week_z = (weekly_team_points - np.mean(weekly_team_points)) / np.std(
-                weekly_team_points
-            )
-            weekly_team_z += week_z * start_ratio
 
-        weekly_team_z /= 17
-        for pid in player_impact:
-            roster = player_roster[pid]
-            player_impact[pid] /= total_points[roster - 1]
-        draft["scores"] = list(weekly_team_z)
-        draft["player_impact"] = player_impact
-    Path("data/drafts_metadata.json").write_text(json.dumps(drafts, indent=2))
+    total_points = np.zeros(draft["teams"])
+    weekly_team_z = np.zeros(draft["teams"])
+    player_roster = {}
+    for i in range(1, 18):
+        weekly_team_points = np.zeros(draft["teams"])
+        start_ratio = np.zeros(draft["teams"])
+        matchups = sleeper_get(
+            f"https://api.sleeper.app/v1/league/{draft['league_id']}/matchups/{i}"
+        )
+        for matchup in matchups:
+            roster = matchup["roster_id"]
+            points = matchup["points"]
+            for i, pos in enumerate(["DEF", "K"]):
+                points -= (
+                    matchup["starters_points"][-i - 1]
+                    if matchup["starters"][-i - 1] in all_players
+                    and all_players[matchup["starters"][-i - 1]]["position"] == pos
+                    else 0
+                )
+            roster_list = [
+                pick["player_id"]
+                for pick in draft["picks"]
+                if pick["roster_id"] == roster
+            ]
+            draft_starter_count = 0
+            for starter in matchup["starters"]:
+                if starter in roster_list:
+                    player_roster[starter] = roster
+                    draft_starter_count += 1
+                    player_impact[starter] += matchup["players_points"][starter]
+            start_ratio[roster - 1] = draft_starter_count / team_size
+            total_points[roster - 1] += points
+            weekly_team_points[roster - 1] = points
+        week_z = (weekly_team_points - np.mean(weekly_team_points)) / np.std(
+            weekly_team_points
+        )
+        weekly_team_z += week_z * start_ratio
+
+    weekly_team_z /= 17
+    for pid in player_impact:
+        roster = player_roster[pid]
+        player_impact[pid] /= total_points[roster - 1]
+    draft["scores"] = list(weekly_team_z)
+    draft["player_impact"] = player_impact
+    return draft
 
 
 def expected_points(df: pd.DataFrame) -> pd.DataFrame:
@@ -237,6 +210,8 @@ def name_to_id():
 
 def draft_info():
     good_drafts = load_ids("data/good_drafts.txt")
+    with Path("nfl.json").open(encoding="utf-8") as f:
+        all_players = json.load(f)
     good_drafts = ["1125986091942735872"]
     draft_list = []
     merged_csv = pd.read_csv("merged.csv")
@@ -285,15 +260,8 @@ def draft_info():
             }
             print(pick_json)
             draft_json["picks"].append(pick_json)
-        draft_list.append(draft_json)
+        draft_list.append(draft_impact(draft_json, all_players))
     Path("data/drafts_metadata.json").write_text(json.dumps(draft_list, indent=2))
-
-
-def load_ids(path: str) -> set[str]:
-    file = Path(path)
-    if not file.exists():
-        return set()
-    return set(file.read_text().splitlines())
 
 
 if __name__ == "__main__":
