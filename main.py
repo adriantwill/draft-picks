@@ -22,7 +22,7 @@ from util import load_ids, sleeper_get
 def main():
     # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     # print(len(load_ids("data/good_drafts.txt")))
-    draft_info()
+    merged_adp()
 
 
 def train_model():
@@ -121,6 +121,20 @@ def normalize_player_name(name: str) -> str:
     name = re.sub(r"\b(jr|sr|ii|iii|iv|v)\b\.?", "", name)
     name = re.sub(r"[^a-z0-9]+", "", name)
     return name
+
+
+def merged_adp():
+    adp_finish = pd.DataFrame
+    for i in range(8):
+        adp = pd.read_csv(f"adp/FantasyPros_{2017 + i}_Overall_ADP_Rankings.csv")
+        adp["normal_name"] = adp["Player"].apply(normalize_player_name)
+        adp["year"] = 2017 + i
+        # adp = adp[["Player", "AVG", "normal_name"]]
+        adp_finish = (
+            adp if adp_finish.empty else pd.concat([adp_finish, adp], ignore_index=True)
+        )
+
+    adp_finish.to_csv("adp_all.csv", index=False)
 
 
 def create_merged():
