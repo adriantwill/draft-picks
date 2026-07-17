@@ -22,14 +22,14 @@ from util import load_ids, sleeper_get
 def main():
     # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     # print(len(load_ids("data/good_drafts.txt")))
-    draft_info()
+    merged_adp()
 
 
 def train_model():
     with open("data/drafts_metadata.json", "r") as f:
         drafts: list[Draft] = json.load(f)
     rows: list[dict[str, Any]] = []
-    merged = pd.read_csv("merged.csv")
+    merged = pd.read_csv("adp_all.csv")
     pos_to_num = {
         "QB": 0,
         "RB": 1,
@@ -50,11 +50,11 @@ def train_model():
             row["is_wr"] = 1 if pick["player_position"] == "WR" else 0
             row["is_te"] = 1 if pick["player_position"] == "TE" else 0
             merged_year = merged_year.drop(
-                merged_year[str(merged_year["player_id"]) == pick["player_id"]].index
+                merged_year[merged_year["player_id"].str == pick["player_id"]].index
             )
             del row["player_id"]
             del row["roster_id"]
-            del row["position"]
+            del row["player_position"]
             row["my_qb_picked"] = team_pos_count[0][pick["roster_id"] - 1]
             row["my_rb_picked"] = team_pos_count[1][pick["roster_id"] - 1]
             row["my_wr_picked"] = team_pos_count[2][pick["roster_id"] - 1]
@@ -121,6 +121,39 @@ def normalize_player_name(name: str) -> str:
     name = re.sub(r"\b(jr|sr|ii|iii|iv|v)\b\.?", "", name)
     name = re.sub(r"[^a-z0-9]+", "", name)
     return name
+
+
+def merged_adp():
+    adp_finish = pd.DataFrame
+    players = pd.read_json("nfl.json").T
+    players = players.drop_duplicates(
+        subset=["search_full_name", "position"],
+        keep="first",
+    )
+    for i in range(8):
+        adp = pd.read_csv(f"adp/FantasyPros_{2017 + i}_Overall_ADP_Rankings.csv")
+        adp["position"] = adp["POS"].str[:2]
+        adp = adp.drop(
+            adp[
+                (adp["position"] != "WR")
+                & (adp["position"] != "TE")
+                & (adp["position"] != "QB")
+                & (adp["position"] != "RB")
+            ].index
+        )
+        adp = adp[["Player", "AVG", "position"]]
+        adp["search_full_name"] = adp["Player"].apply(normalize_player_name)
+        adp["year"] = 2017 + i
+        adp = adp.merge(
+            players[["search_full_name", "position", "player_id"]],
+            on=["search_full_name", "position"],
+            how="left",
+        )
+        adp_finish = (
+            adp if adp_finish.empty else pd.concat([adp_finish, adp], ignore_index=True)
+        )
+
+    adp_finish.to_csv("adp_all.csv", index=False)
 
 
 def create_merged():
@@ -239,7 +272,7 @@ def draft_info():
         all_players: AllPlayers = json.load(f)
     good_drafts = ["1125986091942735872"]
     draft_list: list[Draft] = []
-    merged_csv = pd.read_csv("merged.csv")
+    merged_csv = pd.read_csv("adp_all.csv")
     for draft in good_drafts:
         response = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}")
         if not response:
