@@ -49,8 +49,8 @@ Historical data contains only the action actually taken, not outcomes for every 
 Target league filters:
 
 - Redraft leagues only
-- Normal-ish roster settings
-- Normal-ish scoring settings, likely PPR or half/full PPR
+- 1 QB, 2 RB, 2 WR, 1 TE, 1 FLEX 
+- Full PPR scoring 
 - Completed drafts
 - Remove weird roster sizes
 - Remove very unusual scoring
@@ -85,30 +85,6 @@ Sleeper does not appear to provide a public "give me every league" endpoint. To 
 Official docs:
 
 - https://docs.sleeper.com/
-
-## Getting Sleeper User IDs
-
-There is no official endpoint found for listing all Sleeper users.
-
-Practical method: graph crawl.
-
-1. Start with seed Sleeper usernames or user IDs.
-2. Resolve each username/user ID through Sleeper's user endpoint.
-3. Fetch that user's leagues for target seasons.
-4. For each league, fetch league users.
-5. Add new user IDs to the crawl queue.
-6. Deduplicate users and leagues.
-7. Repeat until enough leagues/drafts are collected.
-
-Seed sources:
-
-- Own Sleeper username
-- Friends' Sleeper usernames
-- Public fantasy creators who share Sleeper leagues
-- Public league invite links/screenshots
-- Previously exported Sleeper league IDs
-
-Avoid random brute-forcing user IDs. Sleeper IDs are huge numeric IDs, so random guessing is low-yield and noisy.
 
 ## Data Needed
 
@@ -165,7 +141,7 @@ ADP, overall rank, and positional rank are correlated but not identical:
 - Number of flex spots
 - Scoring format
 
-The first supported formats should remain tightly filtered. The current effective league filter is full PPR, four-point passing touchdowns, one QB, two RB, two WR, one TE, one FLEX, redraft, non-best-ball, and 10-12 teams. `is_good_draft` permits 14 teams and two FLEX spots, but the earlier league filter currently rejects them. Decide whether to expand this before collecting the final dataset. Team count still changes the meaning of league-wide raw counts.
+The first supported formats should remain tightly filtered. The current effective league filter is full PPR, four-point passing touchdowns, one QB, two RB, two WR, one TE, one FLEX, redraft, non-best-ball, and 10-12 teams.
 
 ### Draft state before current pick
 
@@ -242,108 +218,11 @@ Keep drafted-starter retention as a diagnostic or separate feature/target rather
 
 ADP is the market's aggregated estimate of player value. Treat it as the model's prior, not literal ground truth. The model should improve candidate decisions by adding roster fit and draft context rather than trying to rebuild player projections.
 
-Sources found:
+FantasyPros Source:
 
-- FantasyPros historical ADP
-- Fantasy Football Calculator historical ADP
-- Sleeper ADP may be included through FantasyPros source breakdowns
-
-FantasyPros:
-
-- Historical NFL ADP pages exist by year
+- Historical NFL best ball ADP pages exist by year
 - Useful for overall ADP and positional ADP
 - https://www.fantasypros.com/nfl/adp/
-
-Fantasy Football Calculator:
-
-- Historical ADP going back many years
-- Says data is based on real human mock draft selections
-- https://fantasyfootballcalculator.com/adp
-
-## Other Possible Draft Data Sources
-
-### ffscrapr
-
-R package that wraps multiple fantasy APIs and returns tidy fantasy data.
-
-Useful if exploring data before building custom Python pipeline.
-
-Supports:
-
-- Sleeper
-- MyFantasyLeague
-- Fleaflicker
-- ESPN
-
-Docs:
-
-- https://ffscrapr.ffverse.com/
-
-### MyFantasyLeague
-
-Potentially useful backup source.
-
-Pros:
-
-- Long-running fantasy platform
-- API exists
-- Public league search may make discovery easier than Sleeper
-
-Cons:
-
-- More complex league formats
-- Older platform quirks
-- May require more cleanup
-
-### Fleaflicker
-
-Has public API docs and draft board endpoint.
-
-Useful endpoint:
-
-- `FetchLeagueDraftBoard`
-
-Docs:
-
-- https://www.fleaflicker.com/api-docs/index.html
-
-### ESPN/Yahoo
-
-Poor fit for broad public historical dataset.
-
-Problems:
-
-- More private/authenticated
-- Harder bulk access
-- Less open than Sleeper
-
-## Python Feasibility
-
-This project is very doable in Python.
-
-Hard part is not Python. Hard part is:
-
-- Discovering enough users/leagues
-- Avoiding duplicate data
-- Respecting rate limits
-- Cleaning weird league formats
-- Matching historical player IDs and ADP
-- Building correct draft-state features
-- Avoiding target leakage
-
-Good Python stack:
-
-- `httpx` or `requests` for API calls
-- `sqlite` or `duckdb` for local storage
-- `pandas` for exploration
-- `polars` if data gets large
-- `pyarrow` / parquet for saved datasets
-- `tenacity` or custom retry logic for API reliability
-
-Project rule:
-
-- Use `.venv` for pip installs.
-- Never run bare `pip`.
 
 ## Suggested Storage Tables
 
@@ -562,14 +441,10 @@ Success criteria:
 - Context model beats ADP-only baseline on held-out team-outcome prediction.
 - Recommendations change when roster or remaining-player context changes.
 - Early-round recommendations remain more ADP-driven than later-round recommendations.
-- Results remain reasonable across 10-, 12-, and 14-team leagues.
+- Results remain reasonable across 10-12 team leagues.
 
 ## Open Questions
 
-- Which seasons should be included first?
-- Redraft only, or include keeper/dynasty later?
-- PPR only, half-PPR, standard, or all with scoring normalization?
-- Should outcome use mean weekly z-score, median weekly z-score, percentile, or another normalized early-season team score?
 - Is weeks 1-12 the best balance between outcome stability and draft attribution?
 - Which explicit interactions are enough for the linear baseline?
 - Does a nonlinear model materially outperform the interpretable baseline?
