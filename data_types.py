@@ -32,8 +32,9 @@ class Draft(TypedDict):
     teams: int
     season: str
     picks: list[DraftPick]
-    week_z: NotRequired[list[float]]
-    start_ratio: NotRequired[list[float]]
+    week_z: list[float]
+    start_ratio: list[float]
+    team_player_impact: list[float]
     player_impact: NotRequired[PlayerImpact]
 
 

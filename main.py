@@ -22,7 +22,7 @@ from util import load_ids, sleeper_get
 def main():
     # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     # print(len(load_ids("data/good_drafts.txt")))
-    merged_adp()
+    draft_info()
 
 
 def train_model():
@@ -88,7 +88,7 @@ def train_model():
             row["second_best_te"] = merged_year[merged_year["position"] == "TE"].iloc[
                 1
             ]["AVG"]
-            row["target_score"] = draft["scores"][pick["roster_id"] - 1]
+            row["target_score"] = draft["team_player_impact"][pick["roster_id"] - 1]
             row["pos_gap"] = (
                 row[f"next_best_{pick['player_position'].lower()}"] - pick["adp"]
             )
@@ -189,6 +189,9 @@ def draft_impact(draft: Draft, all_players: AllPlayers) -> Draft:
     team_size = 7
 
     total_points = np.zeros(draft["teams"])
+    total_weekly_z = np.zeros(draft["teams"])
+    total_start_ratio = np.zeros(draft["teams"])
+    team_player_impact = np.zeros(draft["teams"])
     player_roster: dict[PlayerId, int] = {}
     for i in range(1, 18):
         weekly_team_points = np.zeros(draft["teams"])
@@ -223,11 +226,15 @@ def draft_impact(draft: Draft, all_players: AllPlayers) -> Draft:
         week_z = (weekly_team_points - np.mean(weekly_team_points)) / np.std(
             weekly_team_points
         )
+        total_weekly_z += week_z
+        total_start_ratio += start_ratio
     for pid in player_impact:
         roster = player_roster[pid]
         player_impact[pid] /= total_points[roster - 1]
-    draft["start_ratio"] = list(start_ratio)
-    draft["week_z"] = list(week_z)
+        team_player_impact[roster - 1] += player_impact[pid]
+    draft["start_ratio"] = list(total_start_ratio / 17)
+    draft["week_z"] = list(total_weekly_z / 17)
+    draft["team_player_impact"] = list(team_player_impact)
     draft["player_impact"] = player_impact
     return draft
 
@@ -313,7 +320,6 @@ def draft_info():
                 "overall_rank": (overall_rank),
                 "pos_rank": (pos_rank),
             }
-            print(pick_json)
             draft_json["picks"].append(pick_json)
         draft_list.append(draft_impact(draft_json, all_players))
     Path("data/drafts_metadata.json").write_text(json.dumps(draft_list, indent=2))
