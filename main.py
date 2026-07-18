@@ -189,7 +189,6 @@ def draft_impact(draft: Draft, all_players: AllPlayers) -> Draft:
     team_size = 7
 
     total_points = np.zeros(draft["teams"])
-    weekly_team_z = np.zeros(draft["teams"])
     player_roster: dict[PlayerId, int] = {}
     for i in range(1, 18):
         weekly_team_points = np.zeros(draft["teams"])
@@ -224,13 +223,11 @@ def draft_impact(draft: Draft, all_players: AllPlayers) -> Draft:
         week_z = (weekly_team_points - np.mean(weekly_team_points)) / np.std(
             weekly_team_points
         )
-        weekly_team_z += week_z * start_ratio
-
-    weekly_team_z /= 17
     for pid in player_impact:
         roster = player_roster[pid]
         player_impact[pid] /= total_points[roster - 1]
-    draft["scores"] = list(weekly_team_z)
+    draft["start_ratio"] = list(start_ratio)
+    draft["week_z"] = list(week_z)
     draft["player_impact"] = player_impact
     return draft
 

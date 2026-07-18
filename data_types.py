@@ -1,6 +1,5 @@
 from typing import NotRequired, TypedDict
 
-
 type PlayerId = str
 type PlayerImpact = dict[PlayerId, float]
 type IdSet = set[str]
@@ -33,7 +32,8 @@ class Draft(TypedDict):
     teams: int
     season: str
     picks: list[DraftPick]
-    scores: NotRequired[list[float]]
+    week_z: NotRequired[list[float]]
+    start_ratio: NotRequired[list[float]]
     player_impact: NotRequired[PlayerImpact]
 
 
