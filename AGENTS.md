@@ -188,13 +188,7 @@ These interactions let the model learn ideas such as "another WR is less useful 
 
 Preferred target:
 
-- Normalized team scoring over an early-season window, initially weeks 1-12
-
-Why first 12 weeks:
-
-- More stable than only week 1
-- More tied to draft than weeks 13-17
-- Avoids too much noise from playoffs, waivers, trades, and late-season roster churn
+- Normalized team scoring over an early-season window, initially weeks 1-17 (potentially just weeks 1-12)
 
 Need normalize team scores by league format. Example: 120 points in a one-flex league is more impressive than 120 points in a three-flex league.
 
@@ -202,10 +196,10 @@ Possible normalization:
 
 - Team weekly points divided by league weekly average
 - Team weekly points z-score within league/week
-- Median normalized team score over weeks 1-12
-- Percentile rank within league over weeks 1-12
+- Median normalized team score over weeks 1-17
+- Percentile rank within league over weeks 1-17
 
-Weekly within-league z-score direction is good because it compares teams against their actual competition and league format. Current code uses all 17 weeks, while the intended first target uses weeks 1-12. Choose the window before large-scale outcome collection.
+Weekly within-league z-score direction is good because it compares teams against their actual competition and league format. Current code uses all 17 weeks, while the intended first target uses weeks 1-17. Choose the window before large-scale outcome collection.
 
 Current code multiplies each weekly team z-score by the fraction of starters who were originally drafted. This does not cleanly measure either team strength or drafted-player production. In particular, multiplying a negative z-score by a small fraction moves a bad result toward zero and can make it look better. Prefer one clear label first:
 
@@ -244,7 +238,7 @@ Derived tables:
 - `clean_leagues`
 - `clean_draft_picks`
 - `team_week_scores`
-- `team_12_week_outcomes`
+- `team_17_week_outcomes`
 - `pick_features`
 - `player_adp`
 
@@ -402,7 +396,7 @@ Success criteria:
 
 Add team outcomes:
 
-- Fetch weeks 1-12 matchups
+- Fetch weeks 1-17 matchups
 - Compute team weekly points
 - Normalize within league/week
 - Aggregate to team outcome
@@ -445,7 +439,7 @@ Success criteria:
 
 ## Open Questions
 
-- Is weeks 1-12 the best balance between outcome stability and draft attribution?
+- Is weeks 1-17 the best balance between outcome stability and draft attribution?
 - Which explicit interactions are enough for the linear baseline?
 - Does a nonlinear model materially outperform the interpretable baseline?
 - How should missing historical ADP players be handled?

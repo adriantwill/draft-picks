@@ -14,7 +14,6 @@ from data_types import (
     DraftPick,
     PlayerId,
     PlayerImpact,
-    SleeperMatchup,
 )
 from util import load_ids, sleeper_get
 
@@ -39,7 +38,7 @@ def train_model():
     for draft in drafts:
         print(draft)
         team_pos_count = np.zeros((4, draft["teams"]))
-        merged_year = merged[merged["year"] == int(draft["season"])]
+        merged_year = merged.loc[merged["year"] == int(draft["season"])]
         merged_year = merged_year.sort_values("AVG")
         for pick in draft["picks"]:
             row: dict[str, Any] = dict(pick)
@@ -124,7 +123,7 @@ def normalize_player_name(name: str) -> str:
 
 
 def merged_adp():
-    adp_finish = pd.DataFrame
+    adp_finish = pd.DataFrame()
     players = pd.read_json("nfl.json").T
     players = players.drop_duplicates(
         subset=["search_full_name", "position"],
@@ -141,7 +140,7 @@ def merged_adp():
                 & (adp["position"] != "RB")
             ].index
         )
-        adp = adp[["Player", "AVG", "position"]]
+        adp = adp.filter(["Player", "AVG", "position"])
         adp["search_full_name"] = adp["Player"].apply(normalize_player_name)
         adp["year"] = 2017 + i
         adp = adp.merge(
@@ -157,7 +156,7 @@ def merged_adp():
 
 
 def create_merged():
-    adp_finish = pd.DataFrame
+    adp_finish = pd.DataFrame()
     for i in range(8):
         adp = pd.read_csv(f"adp/FantasyPros_{2017 + i}_Overall_ADP_Rankings.csv")
         finish = pd.read_csv(f"finsh/receiving_finish_{2017 + i}.csv")
@@ -166,10 +165,8 @@ def create_merged():
         finish = pd.concat([finish, qb_finish], ignore_index=True)
         finish["normal_name"] = finish["player"].apply(normalize_player_name)
         adp["normal_name"] = adp["Player"].apply(normalize_player_name)
-        adp = adp[["Player", "AVG", "normal_name"]]
-        finish = finish[["player", "fantasyPts", "position", "normal_name"]]
-        finish = finish[["player", "fantasyPts", "position", "normal_name"]]
-        finish = finish[["player", "fantasyPts", "position", "normal_name"]]
+        adp = adp.filter(["Player", "AVG", "normal_name"])
+        finish = finish.filter(["player", "fantasyPts", "position", "normal_name"])
         adp["year"] = 2017 + i
         merged = pd.merge(adp, finish, on="normal_name")
         merged = merged.drop(columns=["Player", "normal_name"])
@@ -178,10 +175,6 @@ def create_merged():
         else:
             adp_finish = pd.concat([adp_finish, merged], ignore_index=True)
     expected_points(adp_finish).to_csv("merged.csv", index=False)
-
-
-#  - Current target multiplies team z-score by drafted-starter retention at main.py:190. This creates
-#    odd behavior: a bad team with fewer drafted starters gets pulled toward zero and looks less bad.
 
 
 def draft_impact(draft: Draft, all_players: AllPlayers) -> Draft:
@@ -196,9 +189,11 @@ def draft_impact(draft: Draft, all_players: AllPlayers) -> Draft:
     for i in range(1, 18):
         weekly_team_points = np.zeros(draft["teams"])
         start_ratio = np.zeros(draft["teams"])
-        matchups: list[SleeperMatchup] = sleeper_get(
+        matchups = sleeper_get(
             f"https://api.sleeper.app/v1/league/{draft['league_id']}/matchups/{i}"
         )
+        if not matchups or type(matchups) is not list:
+            continue
         for matchup in matchups:
             roster = matchup["roster_id"]
             points = matchup["points"]
@@ -232,8 +227,8 @@ def draft_impact(draft: Draft, all_players: AllPlayers) -> Draft:
         roster = player_roster[pid]
         player_impact[pid] /= total_points[roster - 1]
         team_player_impact[roster - 1] += player_impact[pid]
-    draft["start_ratio"] = list(total_start_ratio / 17)
-    draft["week_z"] = list(total_weekly_z / 17)
+    draft["total_start_ratio"] = list(total_start_ratio / 17)
+    draft["total_weekly_z"] = list(total_weekly_z / 17)
     draft["team_player_impact"] = list(team_player_impact)
     draft["player_impact"] = player_impact
     return draft
@@ -276,10 +271,10 @@ def draft_info():
         all_players: AllPlayers = json.load(f)
     good_drafts = ["1125986091942735872"]
     draft_list: list[Draft] = []
-    merged_csv = pd.read_csv("adp_all.csv")
+    adp_csv = pd.read_csv("adp_all.csv")
     for draft in good_drafts:
         response = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}")
-        if not response:
+        if not response or type(response) is not dict:
             continue
         draft_json: Draft = {
             "league_id": response.get("league_id"),
@@ -287,12 +282,15 @@ def draft_info():
             "teams": response.get("settings", {}).get("teams"),
             "season": response.get("season"),
             "picks": [],
+            "total_weekly_z": [],
+            "total_start_ratio": [],
+            "team_player_impact": [],
         }
-        adp_csv = merged_csv[(merged_csv["year"]) == int(response.get("season"))]
+        adp_csv = adp_csv.loc[adp_csv["year"] == int(response.get("season"))]
         adp_csv = adp_csv.sort_values("AVG").reset_index(drop=True)
         adp_csv["pos_rank"] = adp_csv.groupby("position").cumcount() + 1
         picks = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}/picks")
-        if not picks:
+        if not picks or type(picks) is not list:
             continue
         for pick in picks:
             metadata = pick.get("metadata") or {}
@@ -304,13 +302,13 @@ def draft_info():
             overall_rank = None
             pos_rank = None
             adp = None
-            match = adp_csv[adp_csv["player_id"] == float(pick.get("player_id"))]
+            match = adp_csv[str(adp_csv["player_id"]) == pick.get("player_id")]
             if not match.empty:
                 overall_rank = int(match.index[0]) + 1
                 pos_rank = int(match.iloc[0]["pos_rank"])
                 adp = match.reset_index().at[0, "AVG"]
             pick_json: DraftPick = {
-                "pick_no": pick.get("pick_no"),
+                "pick_no": pick["pick_no"],
                 "round": pick.get("round"),
                 "draft_slot": pick.get("draft_slot"),
                 "roster_id": pick.get("roster_id"),

@@ -3,13 +3,15 @@ from pathlib import Path
 
 import requests
 
+from data_types import SleeperResponse
+
 REQUESTS_PER_MINUTE = 600
 SECONDS_PER_REQUEST = 60 / REQUESTS_PER_MINUTE
 
 last_request_time = 0.0
 
 
-def sleeper_get(url: str, retries: int = 3):
+def sleeper_get(url: str, retries: int = 3) -> SleeperResponse | None:
     global last_request_time
 
     for attempt in range(retries):

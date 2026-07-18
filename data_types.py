@@ -32,15 +32,30 @@ class Draft(TypedDict):
     teams: int
     season: str
     picks: list[DraftPick]
-    week_z: list[float]
-    start_ratio: list[float]
+    total_weekly_z: list[float]
+    total_start_ratio: list[float]
     team_player_impact: list[float]
     player_impact: NotRequired[PlayerImpact]
 
 
 class SleeperMatchup(TypedDict):
     roster_id: int
+    league_id: str
     points: float
     starters: list[PlayerId]
     starters_points: list[float]
     players_points: dict[PlayerId, float]
+
+
+class SleeperDraftSettings(TypedDict):
+    teams: int
+
+
+class SleeperDraftResponse(TypedDict):
+    league_id: str
+    draft_id: str
+    settings: SleeperDraftSettings
+    season: str
+
+
+type SleeperResponse = SleeperDraftResponse | list[SleeperMatchup]
