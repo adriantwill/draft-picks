@@ -25,7 +25,9 @@ def expected_points(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def name_to_id(df: pd.DataFrame) -> pd.DataFrame:
-    players = pd.read_json(NFL_JSON).T
+    players = pd.read_json(
+        NFL_JSON,
+    ).T
     players = players.drop_duplicates(
         subset=["search_full_name", "position"],
         keep="first",
@@ -37,7 +39,6 @@ def name_to_id(df: pd.DataFrame) -> pd.DataFrame:
         how="left",
     )
     # df= df.drop(columns=["search_full_name"])
-    df["player_id"] = df["player_id"].astype(str)
     return df
 
 
@@ -69,9 +70,9 @@ def filter_adp(adp: pd.DataFrame, i: int) -> pd.DataFrame:
 
 def merged_adp(csv_name: Path):
     adp_finish = pd.DataFrame()
-    for i in range(8):
+    for i in range(9):
         adp = pd.read_csv(
-            f"{ADP_SCRAPE_DIR}/FantasyPros_{2017 + i}_Overall_ADP_Rankings.csv"
+            f"{ADP_SCRAPE_DIR}/FantasyPros_{2017 + i}_Overall_ADP_Rankings.csv",
         )
         adp = filter_adp(adp, i if csv_name == ADP_FINISH_DIR else 0)
         adp["year"] = 2017 + i
