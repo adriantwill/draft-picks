@@ -33,7 +33,7 @@ def main():
     train_model()
 
 
-def train_model():
+def train_table() -> list[dict[str, Any]]:
     with DRAFTS_METADATA_DIR.open(encoding="utf-8") as f:
         drafts: list[Draft] = json.load(f)
     rows: list[dict[str, Any]] = []
@@ -113,14 +113,14 @@ def train_model():
                 pick["roster_id"] - 1
             ] += 1
             rows.append(row)
-    df = pd.DataFrame(rows)
-    print(df)
-    X = df.drop(columns=["target_score", "player_id", "roster_id"])
-    y = df["target_score", "weekly_z", "start_ratio", "season"]
-    X_train = X[X["season"] < 2024]
-    y_train = y[y["season"] < 2024]
-    y_train = df.drop(columns="season")
-    X_train = df.drop(columns="season")
+    return rows
+
+
+def train_model():
+    df = pd.DataFrame(train_table())
+    train = df[df["season"] < 2025]
+    X_train = train.drop(columns=["target_score", "player_id", "roster_id"])
+    y_train = train["weekly_z"]
     model = LinearRegression()
     model.fit(X_train, y_train)
 
