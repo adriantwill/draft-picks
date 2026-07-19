@@ -3,6 +3,7 @@ from pathlib import Path
 
 import requests
 
+from main import GOOD_DRAFTS_DIR, PENDING_USERS_DIR, SEEN_LEAGUES_DIR, SEEN_USERS_DIR
 from util import load_ids, sleeper_get
 
 
@@ -33,10 +34,10 @@ def bfs_leagues():
     for seed in seed_users:
         user = requests.get(f"https://api.sleeper.app/v1/user/{seed}", timeout=10)
         user_ids.append(user.json()["user_id"])
-    seen_leagues = load_ids("data/seen_leagues.txt")
-    good_drafts = load_ids("data/good_drafts.txt")
-    seen_users = load_ids("data/seen_users.txt") | set(user_ids)
-    pending_users = load_ids("data/pending_users.txt")
+    seen_leagues = load_ids(SEEN_LEAGUES_DIR)
+    good_drafts = load_ids(GOOD_DRAFTS_DIR)
+    seen_users = load_ids(SEEN_USERS_DIR) | set(user_ids)
+    pending_users = load_ids(PENDING_USERS_DIR)
     q = deque(pending_users or user_ids)
 
     try:
@@ -95,11 +96,10 @@ def bfs_leagues():
 
 
 def save_seen_files(seen_leagues: set, good_drafts: set, seen_users: set, q: deque):
-    Path("data").mkdir(exist_ok=True)
-    Path("data/seen_leagues.txt").write_text("\n".join(seen_leagues) + "\n")
-    Path("data/good_drafts.txt").write_text("\n".join(good_drafts) + "\n")
-    Path("data/seen_users.txt").write_text("\n".join(map(str, seen_users)) + "\n")
-    Path("data/pending_users.txt").write_text("\n".join(map(str, q)) + "\n")
+    Path(SEEN_LEAGUES_DIR).write_text("\n".join(seen_leagues) + "\n")
+    Path(GOOD_DRAFTS_DIR).write_text("\n".join(good_drafts) + "\n")
+    Path(SEEN_USERS_DIR).write_text("\n".join(map(str, seen_users)) + "\n")
+    Path(PENDING_USERS_DIR).write_text("\n".join(map(str, q)) + "\n")
 
 
 def is_target_league(league):

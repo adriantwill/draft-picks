@@ -1,3 +1,4 @@
+import re
 import time
 from pathlib import Path
 
@@ -9,6 +10,13 @@ REQUESTS_PER_MINUTE = 600
 SECONDS_PER_REQUEST = 60 / REQUESTS_PER_MINUTE
 
 last_request_time = 0.0
+
+
+def normalize_player_name(name: str) -> str:
+    name = str(name).lower()
+    name = re.sub(r"\b(jr|sr|ii|iii|iv|v)\b\.?", "", name)
+    name = re.sub(r"[^a-z0-9]+", "", name)
+    return name
 
 
 def sleeper_get(url: str, retries: int = 3) -> SleeperResponse | None:
@@ -37,7 +45,7 @@ def sleeper_get(url: str, retries: int = 3) -> SleeperResponse | None:
     return None
 
 
-def load_ids(path: str) -> set[str]:
+def load_ids(path: Path) -> set[str]:
     file = Path(path)
     if not file.exists():
         return set()

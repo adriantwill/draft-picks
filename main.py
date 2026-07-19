@@ -1,5 +1,4 @@
 import json
-import re
 from collections import defaultdict
 from pathlib import Path
 from typing import Any
@@ -15,20 +14,36 @@ from data_types import (
     PlayerId,
     PlayerImpact,
 )
-from util import load_ids, sleeper_get
+from util import load_ids, normalize_player_name, sleeper_get
+
+BASE_DIR = Path(__file__).resolve().parent
+DATA_DIR = BASE_DIR / "data"
+CRAWL_DIR = DATA_DIR / "crawl"
+SEEN_USERS_DIR = CRAWL_DIR / "seen_users.txt"
+GOOD_DRAFTS_DIR = CRAWL_DIR / "good_drafts.txt"
+SEEN_LEAGUES_DIR = CRAWL_DIR / "seen_leagues.txt"
+PENDING_USERS_DIR = CRAWL_DIR / "pending_users.txt"
+CLEAN_DIR = DATA_DIR / "clean"
+ADP_FINISH_DIR = CLEAN_DIR / "merged.csv"
+ADP_DIR = CLEAN_DIR / "adp_all.csv"
+DRAFTS_METADATA_DIR = CLEAN_DIR / "drafts_metadata.json"
+SCRAPE_DIR = DATA_DIR / "scrape"
+ADP_SCRAPE_DIR = SCRAPE_DIR / "adp"
+FINISH_SCRAPE_DIR = SCRAPE_DIR / "finsh"
+NFL_JSON = SCRAPE_DIR / "nfl.json"
 
 
 def main():
     # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-    # print(len(load_ids("data/good_drafts.txt")))
-    draft_info()
+    # print(len(load_ids(GOOD_DRAFTS_DIR)))
+    train_model()
 
 
 def train_model():
-    with open("data/drafts_metadata.json", "r") as f:
+    with DRAFTS_METADATA_DIR.open(encoding="utf-8") as f:
         drafts: list[Draft] = json.load(f)
     rows: list[dict[str, Any]] = []
-    merged = pd.read_csv("adp_all.csv")
+    merged = pd.read_csv(ADP_DIR)
     pos_to_num = {
         "QB": 0,
         "RB": 1,
@@ -49,10 +64,8 @@ def train_model():
             row["is_wr"] = 1 if pick["player_position"] == "WR" else 0
             row["is_te"] = 1 if pick["player_position"] == "TE" else 0
             merged_year = merged_year.drop(
-                merged_year[merged_year["player_id"].str == pick["player_id"]].index
+                merged_year[merged_year["player_id"] == pick["player_id"]].index
             )
-            del row["player_id"]
-            del row["roster_id"]
             del row["player_position"]
             row["my_qb_picked"] = team_pos_count[0][pick["roster_id"] - 1]
             row["my_rb_picked"] = team_pos_count[1][pick["roster_id"] - 1]
@@ -87,7 +100,6 @@ def train_model():
             row["second_best_te"] = merged_year[merged_year["position"] == "TE"].iloc[
                 1
             ]["AVG"]
-            row["target_score"] = draft["team_player_impact"][pick["roster_id"] - 1]
             row["pos_gap"] = (
                 row[f"next_best_{pick['player_position'].lower()}"] - pick["adp"]
             )
@@ -99,82 +111,24 @@ def train_model():
             row["qb_picked_normalized"] = sum(team_pos_count[0]) / row["pick_no"]
             row["te_per_team"] = sum(team_pos_count[3]) / draft["teams"]
             row["te_picked_normalized"] = sum(team_pos_count[3]) / row["pick_no"]
+
+            row["target_score"] = draft["team_player_impact"][pick["roster_id"] - 1]
+            row["weekly_z"] = draft["total_weekly_z"][pick["roster_id"] - 1]
+            row["start_ratio"] = draft["total_start_ratio"][pick["roster_id"] - 1]
             team_pos_count[pos_to_num[pick["player_position"]]][
                 pick["roster_id"] - 1
             ] += 1
             rows.append(row)
     df = pd.DataFrame(rows)
     print(df)
-    X = df.drop(columns="target_score")
-    y = df["target_score", "season"]
+    X = df.drop(columns=["target_score", "player_id", "roster_id"])
+    y = df["target_score", "weekly_z", "start_ratio", "season"]
     X_train = X[X["season"] < 2024]
     y_train = y[y["season"] < 2024]
     y_train = df.drop(columns="season")
     X_train = df.drop(columns="season")
     model = LinearRegression()
     model.fit(X_train, y_train)
-
-
-def normalize_player_name(name: str) -> str:
-    name = str(name).lower()
-    name = re.sub(r"\b(jr|sr|ii|iii|iv|v)\b\.?", "", name)
-    name = re.sub(r"[^a-z0-9]+", "", name)
-    return name
-
-
-def merged_adp():
-    adp_finish = pd.DataFrame()
-    players = pd.read_json("nfl.json").T
-    players = players.drop_duplicates(
-        subset=["search_full_name", "position"],
-        keep="first",
-    )
-    for i in range(8):
-        adp = pd.read_csv(f"adp/FantasyPros_{2017 + i}_Overall_ADP_Rankings.csv")
-        adp["position"] = adp["POS"].str[:2]
-        adp = adp.drop(
-            adp[
-                (adp["position"] != "WR")
-                & (adp["position"] != "TE")
-                & (adp["position"] != "QB")
-                & (adp["position"] != "RB")
-            ].index
-        )
-        adp = adp.filter(["Player", "AVG", "position"])
-        adp["search_full_name"] = adp["Player"].apply(normalize_player_name)
-        adp["year"] = 2017 + i
-        adp = adp.merge(
-            players[["search_full_name", "position", "player_id"]],
-            on=["search_full_name", "position"],
-            how="left",
-        )
-        adp_finish = (
-            adp if adp_finish.empty else pd.concat([adp_finish, adp], ignore_index=True)
-        )
-
-    adp_finish.to_csv("adp_all.csv", index=False)
-
-
-def create_merged():
-    adp_finish = pd.DataFrame()
-    for i in range(8):
-        adp = pd.read_csv(f"adp/FantasyPros_{2017 + i}_Overall_ADP_Rankings.csv")
-        finish = pd.read_csv(f"finsh/receiving_finish_{2017 + i}.csv")
-        qb_finish = pd.read_csv(f"finsh/passing_finish_{2017 + i}.csv")
-        qb_finish["position"] = "QB"
-        finish = pd.concat([finish, qb_finish], ignore_index=True)
-        finish["normal_name"] = finish["player"].apply(normalize_player_name)
-        adp["normal_name"] = adp["Player"].apply(normalize_player_name)
-        adp = adp.filter(["Player", "AVG", "normal_name"])
-        finish = finish.filter(["player", "fantasyPts", "position", "normal_name"])
-        adp["year"] = 2017 + i
-        merged = pd.merge(adp, finish, on="normal_name")
-        merged = merged.drop(columns=["Player", "normal_name"])
-        if adp_finish.empty:
-            adp_finish = merged
-        else:
-            adp_finish = pd.concat([adp_finish, merged], ignore_index=True)
-    expected_points(adp_finish).to_csv("merged.csv", index=False)
 
 
 def draft_impact(draft: Draft, all_players: AllPlayers) -> Draft:
@@ -234,44 +188,13 @@ def draft_impact(draft: Draft, all_players: AllPlayers) -> Draft:
     return draft
 
 
-def expected_points(df: pd.DataFrame) -> pd.DataFrame:
-    df = df.sort_values(["year", "position", "AVG"]).copy()
-    df["bucket"] = df.groupby(by=["year", "position"]).cumcount() // 6
-    expected_points = (
-        df[df["year"] < 2024]
-        .groupby(by=["bucket", "position"])["fantasyPts"]
-        .median()
-        .to_frame("median")
-    ).reset_index()
-    df = df.merge(expected_points, on=["position", "bucket"])
-    df["expected_diff"] = df["fantasyPts"] - df["median"]
-    return df
-
-
-def name_to_id():
-    players = pd.read_json("nfl.json").T
-    players = players.drop_duplicates(
-        subset=["search_full_name", "position"],
-        keep="first",
-    )
-    merged = pd.read_csv("merged.csv")
-    merged["search_full_name"] = merged["player"].apply(normalize_player_name)
-    merged = merged.merge(
-        players[["search_full_name", "position", "player_id"]],
-        on=["search_full_name", "position"],
-        how="left",
-    )
-    merged = merged.drop(columns=["search_full_name"])
-    merged.to_csv("merged.csv", index=False)
-
-
 def draft_info():
-    good_drafts = load_ids("data/good_drafts.txt")
-    with Path("nfl.json").open(encoding="utf-8") as f:
+    good_drafts = load_ids(GOOD_DRAFTS_DIR)
+    with NFL_JSON.open(encoding="utf-8") as f:
         all_players: AllPlayers = json.load(f)
     good_drafts = ["1125986091942735872"]
     draft_list: list[Draft] = []
-    adp_csv = pd.read_csv("adp_all.csv")
+    adp_csv = pd.read_csv(ADP_DIR)
     for draft in good_drafts:
         response = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}")
         if not response or type(response) is not dict:
@@ -302,7 +225,7 @@ def draft_info():
             overall_rank = None
             pos_rank = None
             adp = None
-            match = adp_csv[str(adp_csv["player_id"]) == pick.get("player_id")]
+            match = adp_csv[adp_csv["player_id"] == pick.get("player_id")]
             if not match.empty:
                 overall_rank = int(match.index[0]) + 1
                 pos_rank = int(match.iloc[0]["pos_rank"])
@@ -320,7 +243,7 @@ def draft_info():
             }
             draft_json["picks"].append(pick_json)
         draft_list.append(draft_impact(draft_json, all_players))
-    Path("data/drafts_metadata.json").write_text(json.dumps(draft_list, indent=2))
+    DRAFTS_METADATA_DIR.write_text(json.dumps(draft_list, indent=2))
 
 
 if __name__ == "__main__":
