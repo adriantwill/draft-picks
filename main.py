@@ -14,13 +14,16 @@ from data_types import (
     PlayerId,
     PlayerImpact,
 )
-from util import load_ids, sleeper_get
+from util import load_ids, normalize_player_name, sleeper_get
+
+BASE_DIR = Path(__file__).resolve().parent
+DATA_DIR = BASE_DIR / "data"
 
 
 def main():
     # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     # print(len(load_ids("data/good_drafts.txt")))
-    merged_adp()
+    train_model()
 
 
 def train_model():
@@ -113,40 +116,6 @@ def train_model():
     X_train = df.drop(columns="season")
     model = LinearRegression()
     model.fit(X_train, y_train)
-
-
-def merged_adp():
-    adp_finish = pd.DataFrame()
-    players = pd.read_json("nfl.json").T
-    players = players.drop_duplicates(
-        subset=["search_full_name", "position"],
-        keep="first",
-    )
-    for i in range(8):
-        adp = pd.read_csv(f"adp/FantasyPros_{2017 + i}_Overall_ADP_Rankings.csv")
-        adp["position"] = adp["POS"].str[:2]
-        adp = adp.drop(
-            adp[
-                (adp["position"] != "WR")
-                & (adp["position"] != "TE")
-                & (adp["position"] != "QB")
-                & (adp["position"] != "RB")
-            ].index
-        )
-        adp = adp.filter(["Player", "AVG", "position"])
-        adp["search_full_name"] = adp["Player"].apply(normalize_player_name)
-        adp["year"] = 2017 + i
-        adp = adp.merge(
-            players[["search_full_name", "position", "player_id"]],
-            on=["search_full_name", "position"],
-            how="left",
-        )
-        adp["player_id"] = adp["player_id"].astype(str)
-        adp_finish = (
-            adp if adp_finish.empty else pd.concat([adp_finish, adp], ignore_index=True)
-        )
-
-    adp_finish.to_csv("adp_all.csv", index=False)
 
 
 def draft_impact(draft: Draft, all_players: AllPlayers) -> Draft:
