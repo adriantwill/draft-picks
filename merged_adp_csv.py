@@ -2,11 +2,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from main import DATA_DIR
+from main import ADP_DIR, ADP_FINISH_DIR, ADP_SCRAPE_DIR, FINISH_SCRAPE_DIR, NFL_JSON
 from util import normalize_player_name
-
-ADP_FINISH_DIR = DATA_DIR / "adp_finish.csv"
-ADP_DIR = DATA_DIR / "adp.csv"
 
 
 def main():
@@ -28,7 +25,7 @@ def expected_points(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def name_to_id(df: pd.DataFrame) -> pd.DataFrame:
-    players = pd.read_json("nfl.json").T
+    players = pd.read_json(NFL_JSON).T
     players = players.drop_duplicates(
         subset=["search_full_name", "position"],
         keep="first",
@@ -46,8 +43,8 @@ def name_to_id(df: pd.DataFrame) -> pd.DataFrame:
 
 def filter_adp(adp: pd.DataFrame, i: int) -> pd.DataFrame:
     if i > 0:
-        finish = pd.read_csv(f"finsh/receiving_finish_{2017 + i}.csv")
-        qb_finish = pd.read_csv(f"finsh/passing_finish_{2017 + i}.csv")
+        finish = pd.read_csv(f"{FINISH_SCRAPE_DIR}/receiving_finish_{2017 + i}.csv")
+        qb_finish = pd.read_csv(f"{FINISH_SCRAPE_DIR}/passing_finish_{2017 + i}.csv")
         qb_finish["position"] = "QB"
         finish = pd.concat([finish, qb_finish], ignore_index=True)
         finish["normal_name"] = finish["player"].apply(normalize_player_name)
@@ -73,7 +70,9 @@ def filter_adp(adp: pd.DataFrame, i: int) -> pd.DataFrame:
 def merged_adp(csv_name: Path):
     adp_finish = pd.DataFrame()
     for i in range(8):
-        adp = pd.read_csv(f"adp/FantasyPros_{2017 + i}_Overall_ADP_Rankings.csv")
+        adp = pd.read_csv(
+            f"{ADP_SCRAPE_DIR}/FantasyPros_{2017 + i}_Overall_ADP_Rankings.csv"
+        )
         adp = filter_adp(adp, i if csv_name == ADP_FINISH_DIR else 0)
         adp["year"] = 2017 + i
         adp_finish = (

@@ -18,19 +18,32 @@ from util import load_ids, normalize_player_name, sleeper_get
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
+CRAWL_DIR = DATA_DIR / "crawl"
+SEEN_USERS_DIR = CRAWL_DIR / "seen_users.txt"
+GOOD_DRAFTS_DIR = CRAWL_DIR / "good_drafts.txt"
+SEEN_LEAGUES_DIR = CRAWL_DIR / "seen_leagues.txt"
+PENDING_USERS_DIR = CRAWL_DIR / "pending_users.txt"
+CLEAN_DIR = DATA_DIR / "clean"
+ADP_FINISH_DIR = CLEAN_DIR / "merged.csv"
+ADP_DIR = CLEAN_DIR / "adp_all.csv"
+DRAFTS_METADATA_DIR = CLEAN_DIR / "drafts_metadata.json"
+SCRAPE_DIR = DATA_DIR / "scrape"
+ADP_SCRAPE_DIR = SCRAPE_DIR / "adp"
+FINISH_SCRAPE_DIR = SCRAPE_DIR / "finsh"
+NFL_JSON = SCRAPE_DIR / "nfl.json"
 
 
 def main():
     # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-    # print(len(load_ids("data/good_drafts.txt")))
+    # print(len(load_ids(GOOD_DRAFTS_DIR)))
     train_model()
 
 
 def train_model():
-    with open("data/drafts_metadata.json", "r") as f:
+    with DRAFTS_METADATA_DIR.open(encoding="utf-8") as f:
         drafts: list[Draft] = json.load(f)
     rows: list[dict[str, Any]] = []
-    merged = pd.read_csv("adp_all.csv")
+    merged = pd.read_csv(ADP_DIR)
     pos_to_num = {
         "QB": 0,
         "RB": 1,
@@ -176,12 +189,12 @@ def draft_impact(draft: Draft, all_players: AllPlayers) -> Draft:
 
 
 def draft_info():
-    good_drafts = load_ids("data/good_drafts.txt")
-    with Path("nfl.json").open(encoding="utf-8") as f:
+    good_drafts = load_ids(GOOD_DRAFTS_DIR)
+    with NFL_JSON.open(encoding="utf-8") as f:
         all_players: AllPlayers = json.load(f)
     good_drafts = ["1125986091942735872"]
     draft_list: list[Draft] = []
-    adp_csv = pd.read_csv("adp_all.csv")
+    adp_csv = pd.read_csv(ADP_DIR)
     for draft in good_drafts:
         response = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}")
         if not response or type(response) is not dict:
@@ -230,7 +243,7 @@ def draft_info():
             }
             draft_json["picks"].append(pick_json)
         draft_list.append(draft_impact(draft_json, all_players))
-    Path("data/drafts_metadata.json").write_text(json.dumps(draft_list, indent=2))
+    DRAFTS_METADATA_DIR.write_text(json.dumps(draft_list, indent=2))
 
 
 if __name__ == "__main__":

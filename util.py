@@ -45,7 +45,7 @@ def sleeper_get(url: str, retries: int = 3) -> SleeperResponse | None:
     return None
 
 
-def load_ids(path: str) -> set[str]:
+def load_ids(path: Path) -> set[str]:
     file = Path(path)
     if not file.exists():
         return set()
