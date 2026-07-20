@@ -1,5 +1,4 @@
 import json
-from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -7,35 +6,19 @@ import pandas as pd
 from sklearn.ensemble import HistGradientBoostingRegressor
 
 from src.data_types import Draft
-
-BASE_DIR = Path(__file__).resolve().parent
-DATA_DIR = BASE_DIR / "data"
-CRAWL_DIR = DATA_DIR / "crawl"
-SEEN_USERS_DIR = CRAWL_DIR / "seen_users.txt"
-GOOD_DRAFTS_DIR = CRAWL_DIR / "good_drafts.txt"
-SEEN_LEAGUES_DIR = CRAWL_DIR / "seen_leagues.txt"
-PENDING_USERS_DIR = CRAWL_DIR / "pending_users.txt"
-CLEAN_DIR = DATA_DIR / "clean"
-ADP_FINISH_DIR = CLEAN_DIR / "merged.csv"
-ADP_DIR = CLEAN_DIR / "adp_all.csv"
-DRAFTS_METADATA_DIR = CLEAN_DIR / "drafts_metadata.json"
-SCRAPE_DIR = DATA_DIR / "scrape"
-ADP_SCRAPE_DIR = SCRAPE_DIR / "adp"
-FINISH_SCRAPE_DIR = SCRAPE_DIR / "finsh"
-NFL_JSON = SCRAPE_DIR / "nfl.json"
+from src.path import ADP_CSV_PATH, DRAFTS_METADATA_PATH
 
 
 def main():
     # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-    # print(len(load_ids(GOOD_DRAFTS_DIR)))
     train_model()
 
 
 def train_table() -> list[dict[str, Any]]:
-    with DRAFTS_METADATA_DIR.open(encoding="utf-8") as f:
+    with DRAFTS_METADATA_PATH.open(encoding="utf-8") as f:
         drafts: list[Draft] = json.load(f)
     rows: list[dict[str, Any]] = []
-    merged = pd.read_csv(ADP_DIR, dtype={"player_id": "string"})
+    merged = pd.read_csv(ADP_CSV_PATH, dtype={"player_id": "string"})
     pos_to_num = {
         "QB": 0,
         "RB": 1,
@@ -118,6 +101,9 @@ def train_table() -> list[dict[str, Any]]:
             row["target_score"] = draft["team_player_impact"][pick["roster_id"] - 1]
             row["weekly_z"] = draft["total_weekly_z"][pick["roster_id"] - 1]
             row["start_ratio"] = draft["total_start_ratio"][pick["roster_id"] - 1]
+            row["mean_drafted_starter_points_z"] = draft[
+                "mean_drafted_starter_points_z"
+            ][pick["roster_id"] - 1]
             team_pos_count[pos_to_num[pick["player_position"]]][
                 pick["roster_id"] - 1
             ] += 1
@@ -139,14 +125,8 @@ def train_model():
             ", "
         )
     ]
-    y_train_z = train["weekly_z"]
-    y_train_impact = train["target_score"]
-    y_train_start_ratio = train["start_ratio"]
-    impact_model = HistGradientBoostingRegressor().fit(X_train, y_train_impact)
-    z_model = HistGradientBoostingRegressor().fit(X_train, y_train_z)
-    start_ratio_model = HistGradientBoostingRegressor().fit(
-        X_train, y_train_start_ratio
-    )
+    y_train = train["mean_drafted_starter_points_z"]
+    model = HistGradientBoostingRegressor().fit(X_train, y_train)
 
 
 if __name__ == "__main__":

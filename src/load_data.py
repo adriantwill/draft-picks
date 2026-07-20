@@ -1,9 +1,13 @@
 from collections import Counter, deque
-from pathlib import Path
 
 import requests
 
-from main import GOOD_DRAFTS_DIR, PENDING_USERS_DIR, SEEN_LEAGUES_DIR, SEEN_USERS_DIR
+from path import (
+    PENDING_USER_IDS_PATH,
+    QUALIFYING_DRAFT_IDS_PATH,
+    SEEN_LEAGUE_IDS_PATH,
+    SEEN_USER_IDS_PATH,
+)
 from util import load_ids, sleeper_get
 
 
@@ -34,10 +38,10 @@ def bfs_leagues():
     for seed in seed_users:
         user = requests.get(f"https://api.sleeper.app/v1/user/{seed}", timeout=10)
         user_ids.append(user.json()["user_id"])
-    seen_leagues = load_ids(SEEN_LEAGUES_DIR)
-    good_drafts = load_ids(GOOD_DRAFTS_DIR)
-    seen_users = load_ids(SEEN_USERS_DIR) | set(user_ids)
-    pending_users = load_ids(PENDING_USERS_DIR)
+    seen_leagues = load_ids(SEEN_LEAGUE_IDS_PATH)
+    good_drafts = load_ids(QUALIFYING_DRAFT_IDS_PATH)
+    seen_users = load_ids(SEEN_USER_IDS_PATH) | set(user_ids)
+    pending_users = load_ids(PENDING_USER_IDS_PATH)
     q = deque(pending_users or user_ids)
 
     try:
@@ -96,10 +100,10 @@ def bfs_leagues():
 
 
 def save_seen_files(seen_leagues: set, good_drafts: set, seen_users: set, q: deque):
-    Path(SEEN_LEAGUES_DIR).write_text("\n".join(seen_leagues) + "\n")
-    Path(GOOD_DRAFTS_DIR).write_text("\n".join(good_drafts) + "\n")
-    Path(SEEN_USERS_DIR).write_text("\n".join(map(str, seen_users)) + "\n")
-    Path(PENDING_USERS_DIR).write_text("\n".join(map(str, q)) + "\n")
+    SEEN_LEAGUE_IDS_PATH.write_text("\n".join(seen_leagues) + "\n")
+    QUALIFYING_DRAFT_IDS_PATH.write_text("\n".join(good_drafts) + "\n")
+    SEEN_USER_IDS_PATH.write_text("\n".join(map(str, seen_users)) + "\n")
+    PENDING_USER_IDS_PATH.write_text("\n".join(map(str, q)) + "\n")
 
 
 def is_target_league(league):
