@@ -6,9 +6,7 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 
-from data_types import (
-    Draft,
-)
+from src.data_types import Draft
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
@@ -33,11 +31,11 @@ def main():
     train_model()
 
 
-def train_model():
+def train_table() -> list[dict[str, Any]]:
     with DRAFTS_METADATA_DIR.open(encoding="utf-8") as f:
         drafts: list[Draft] = json.load(f)
     rows: list[dict[str, Any]] = []
-    merged = pd.read_csv(ADP_DIR)
+    merged = pd.read_csv(ADP_DIR, dtype={"player_id": "string"})
     pos_to_num = {
         "QB": 0,
         "RB": 1,
@@ -45,7 +43,6 @@ def train_model():
         "TE": 3,
     }
     for draft in drafts:
-        print(draft)
         team_pos_count = np.zeros((4, draft["teams"]))
         merged_year = merged.loc[merged["year"] == int(draft["season"])]
         merged_year = merged_year.sort_values("AVG")
@@ -60,15 +57,14 @@ def train_model():
             merged_year = merged_year.drop(
                 merged_year[merged_year["player_id"] == pick["player_id"]].index
             )
-            del row["player_position"]
-            row["my_qb_picked"] = team_pos_count[0][pick["roster_id"] - 1]
-            row["my_rb_picked"] = team_pos_count[1][pick["roster_id"] - 1]
-            row["my_wr_picked"] = team_pos_count[2][pick["roster_id"] - 1]
-            row["my_te_picked"] = team_pos_count[3][pick["roster_id"] - 1]
-            row["qb_picked"] = sum(team_pos_count[0])
-            row["rb_picked"] = sum(team_pos_count[1])
-            row["wr_picked"] = sum(team_pos_count[2])
-            row["te_picked"] = sum(team_pos_count[3])
+            row["my_qb_picked"] = int(team_pos_count[0][pick["roster_id"] - 1])
+            row["my_rb_picked"] = int(team_pos_count[1][pick["roster_id"] - 1])
+            row["my_wr_picked"] = int(team_pos_count[2][pick["roster_id"] - 1])
+            row["my_te_picked"] = int(team_pos_count[3][pick["roster_id"] - 1])
+            row["total_qb_picked"] = int(sum(team_pos_count[0]))
+            row["total_rb_picked"] = int(sum(team_pos_count[1]))
+            row["total_wr_picked"] = int(sum(team_pos_count[2]))
+            row["total_te_picked"] = int(sum(team_pos_count[3]))
 
             row["next_best_qb"] = merged_year[merged_year["position"] == "QB"].iloc[0][
                 "AVG"
@@ -94,17 +90,30 @@ def train_model():
             row["second_best_te"] = merged_year[merged_year["position"] == "TE"].iloc[
                 1
             ]["AVG"]
-            row["pos_gap"] = (
-                row[f"next_best_{pick['player_position'].lower()}"] - pick["adp"]
-            )
             row["wr_per_team"] = sum(team_pos_count[2]) / draft["teams"]
-            row["wr_picked_normalized"] = sum(team_pos_count[2]) / row["pick_no"]
+            row["wr_picked_normalized"] = (
+                0
+                if row["pick_no"] <= 1
+                else sum(team_pos_count[2]) / (row["pick_no"] - 1)
+            )
             row["rb_per_team"] = sum(team_pos_count[1]) / draft["teams"]
-            row["rb_picked_normalized"] = sum(team_pos_count[1]) / row["pick_no"]
+            row["rb_picked_normalized"] = (
+                0
+                if row["pick_no"] <= 1
+                else sum(team_pos_count[1]) / (row["pick_no"] - 1)
+            )
             row["qb_per_team"] = sum(team_pos_count[0]) / draft["teams"]
-            row["qb_picked_normalized"] = sum(team_pos_count[0]) / row["pick_no"]
+            row["qb_picked_normalized"] = (
+                0
+                if row["pick_no"] <= 1
+                else sum(team_pos_count[0]) / (row["pick_no"] - 1)
+            )
             row["te_per_team"] = sum(team_pos_count[3]) / draft["teams"]
-            row["te_picked_normalized"] = sum(team_pos_count[3]) / row["pick_no"]
+            row["te_picked_normalized"] = (
+                0
+                if row["pick_no"] <= 1
+                else sum(team_pos_count[3]) / (row["pick_no"] - 1)
+            )
 
             row["target_score"] = draft["team_player_impact"][pick["roster_id"] - 1]
             row["weekly_z"] = draft["total_weekly_z"][pick["roster_id"] - 1]
@@ -112,15 +121,25 @@ def train_model():
             team_pos_count[pos_to_num[pick["player_position"]]][
                 pick["roster_id"] - 1
             ] += 1
-            rows.append(row)
-    df = pd.DataFrame(rows)
-    print(df)
-    X = df.drop(columns=["target_score", "player_id", "roster_id"])
-    y = df["target_score", "weekly_z", "start_ratio", "season"]
-    X_train = X[X["season"] < 2024]
-    y_train = y[y["season"] < 2024]
-    y_train = df.drop(columns="season")
-    X_train = df.drop(columns="season")
+            if not pick["adp"]:
+                print("no adp")
+            else:
+                row["pos_gap"] = (
+                    row[f"next_best_{pick['player_position'].lower()}"] - pick["adp"]
+                )
+                rows.append(row)
+    return rows
+
+
+def train_model():
+    df = pd.DataFrame(train_table())
+    train = df[df["season"] < 2025]
+    X_train = train[
+        "pick_no, round, draft_slot, adp, overall_rank, pos_rank, team_count, is_qb, is_rb, is_wr, is_te, my_qb_picked, my_rb_picked, my_wr_picked, my_te_picked, total_qb_picked, total_rb_picked, total_wr_picked, total_te_picked, next_best_qb, next_best_rb, next_best_wr, next_best_te, second_best_qb, second_best_rb, second_best_wr, second_best_te, pos_gap, wr_per_team, wr_picked_normalized, rb_per_team, rb_picked_normalized, qb_per_team, qb_picked_normalized, te_per_team, te_picked_normalized".split(
+            ", "
+        )
+    ]
+    y_train = train["weekly_z"]
     model = LinearRegression()
     model.fit(X_train, y_train)
 
