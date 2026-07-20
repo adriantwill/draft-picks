@@ -35,6 +35,7 @@ class Draft(TypedDict):
     total_weekly_z: list[float]
     total_start_ratio: list[float]
     team_player_impact: list[float]
+    mean_drafted_starter_points_z: list[float]
     player_impact: NotRequired[PlayerImpact]
 
 

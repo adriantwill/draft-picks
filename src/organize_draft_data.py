@@ -21,10 +21,13 @@ def draft_impact(draft: Draft, all_players: AllPlayers) -> Draft:
     total_weekly_z = np.zeros(draft["teams"])
     total_start_ratio = np.zeros(draft["teams"])
     team_player_impact = np.zeros(draft["teams"])
+    total_starter_points_z = np.zeros(draft["teams"])
     player_roster: dict[PlayerId, int] = {}
-    for i in range(1, 18):
+    num_weeks = 17 if int(draft["season"]) >= 2021 else 16
+    for i in range(1, num_weeks + 1):
         weekly_team_points = np.zeros(draft["teams"])
         start_ratio = np.zeros(draft["teams"])
+        starter_points = np.zeros(draft["teams"])
         matchups = sleeper_get(
             f"https://api.sleeper.app/v1/league/{draft['league_id']}/matchups/{i}"
         )
@@ -48,6 +51,8 @@ def draft_impact(draft: Draft, all_players: AllPlayers) -> Draft:
             draft_starter_count = 0
             for starter in matchup["starters"]:
                 if starter in roster_list:
+                    # list of 12 teams
+                    starter_points[roster - 1] += matchup["players_points"][starter]
                     player_roster[starter] = roster
                     draft_starter_count += 1
                     player_impact[starter] += matchup["players_points"][starter]
@@ -57,16 +62,21 @@ def draft_impact(draft: Draft, all_players: AllPlayers) -> Draft:
         week_z = (weekly_team_points - np.mean(weekly_team_points)) / np.std(
             weekly_team_points
         )
+        starter_points_z = (starter_points - np.mean(starter_points)) / np.std(
+            starter_points
+        )
+        total_starter_points_z += starter_points_z
         total_weekly_z += week_z
         total_start_ratio += start_ratio
     for pid in player_impact:
         roster = player_roster[pid]
         player_impact[pid] /= total_points[roster - 1]
         team_player_impact[roster - 1] += player_impact[pid]
-    draft["total_start_ratio"] = list(total_start_ratio / 17)
-    draft["total_weekly_z"] = list(total_weekly_z / 17)
+    draft["total_start_ratio"] = list(total_start_ratio / num_weeks)
+    draft["total_weekly_z"] = list(total_weekly_z / num_weeks)
     draft["team_player_impact"] = list(team_player_impact)
     draft["player_impact"] = player_impact
+    draft["mean_drafted_starter_points_z"] = list(total_starter_points_z / num_weeks)
     return draft
 
 
