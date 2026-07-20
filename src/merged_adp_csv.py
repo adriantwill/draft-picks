@@ -2,12 +2,18 @@ from pathlib import Path
 
 import pandas as pd
 
-from main import ADP_DIR, ADP_FINISH_DIR, ADP_SCRAPE_DIR, FINISH_SCRAPE_DIR, NFL_JSON
+from path import (
+    ADP_CSV_PATH,
+    ADP_SCRAPE_DIR,
+    ADP_WITH_FINISH_CSV_PATH,
+    FINISH_SCRAPE_DIR,
+    NFL_PLAYERS_JSON_PATH,
+)
 from util import normalize_player_name
 
 
 def main():
-    merged_adp(ADP_DIR)
+    merged_adp(ADP_CSV_PATH)
 
 
 def expected_points(df: pd.DataFrame) -> pd.DataFrame:
@@ -26,7 +32,7 @@ def expected_points(df: pd.DataFrame) -> pd.DataFrame:
 
 def name_to_id(df: pd.DataFrame) -> pd.DataFrame:
     players = pd.read_json(
-        NFL_JSON,
+        NFL_PLAYERS_JSON_PATH,
     ).T
     players = players.drop_duplicates(
         subset=["search_full_name", "position"],
@@ -68,21 +74,23 @@ def filter_adp(adp: pd.DataFrame, i: int) -> pd.DataFrame:
     return adp
 
 
-def merged_adp(csv_name: Path):
+def merged_adp(output_csv_path: Path):
     adp_finish = pd.DataFrame()
     for i in range(9):
         adp = pd.read_csv(
             f"{ADP_SCRAPE_DIR}/FantasyPros_{2017 + i}_Overall_ADP_Rankings.csv",
         )
-        adp = filter_adp(adp, i if csv_name == ADP_FINISH_DIR else 0)
+        adp = filter_adp(
+            adp, i if output_csv_path == ADP_WITH_FINISH_CSV_PATH else 0
+        )
         adp["year"] = 2017 + i
         adp_finish = (
             adp if adp_finish.empty else pd.concat([adp_finish, adp], ignore_index=True)
         )
     adp_finish = name_to_id(adp_finish)
-    if csv_name == ADP_FINISH_DIR:
+    if output_csv_path == ADP_WITH_FINISH_CSV_PATH:
         adp_finish = expected_points(adp_finish)
-    adp_finish.to_csv(csv_name, index=False)
+    adp_finish.to_csv(output_csv_path, index=False)
 
 
 if __name__ == "__main__":

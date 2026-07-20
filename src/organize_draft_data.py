@@ -5,7 +5,12 @@ import numpy as np
 import pandas as pd
 
 from data_types import AllPlayers, Draft, DraftPick, PlayerId, PlayerImpact
-from main import ADP_DIR, DRAFTS_METADATA_DIR, GOOD_DRAFTS_DIR, NFL_JSON
+from path import (
+    ADP_CSV_PATH,
+    DRAFTS_METADATA_PATH,
+    NFL_PLAYERS_JSON_PATH,
+    QUALIFYING_DRAFT_IDS_PATH,
+)
 from util import load_ids, normalize_player_name, sleeper_get
 
 
@@ -76,16 +81,18 @@ def draft_impact(draft: Draft, all_players: AllPlayers) -> Draft:
     draft["total_weekly_z"] = list(total_weekly_z / num_weeks)
     draft["team_player_impact"] = list(team_player_impact)
     draft["player_impact"] = player_impact
-    draft["mean_drafted_starter_points_z"] = list(total_starter_points_z / num_weeks)
+    draft["mean_drafted_starter_points_z"] = list(
+        total_starter_points_z / num_weeks
+    )  # TODO ensure each matchup has vlaid # of weeks and users
     return draft
 
 
 def draft_info():
-    good_drafts = load_ids(GOOD_DRAFTS_DIR)
-    with NFL_JSON.open(encoding="utf-8") as f:
+    good_drafts = load_ids(QUALIFYING_DRAFT_IDS_PATH)
+    with NFL_PLAYERS_JSON_PATH.open(encoding="utf-8") as f:
         all_players: AllPlayers = json.load(f)
     draft_list: list[Draft] = []
-    adp_csv_original = pd.read_csv(ADP_DIR, dtype={"player_id": "string"})
+    adp_csv_original = pd.read_csv(ADP_CSV_PATH, dtype={"player_id": "string"})
     print(adp_csv_original.head().dtypes)
     for draft in list(good_drafts)[:5]:
         response = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}")
@@ -138,7 +145,7 @@ def draft_info():
             }
             draft_json["picks"].append(pick_json)
         draft_list.append(draft_impact(draft_json, all_players))
-    DRAFTS_METADATA_DIR.write_text(json.dumps(draft_list, indent=2))
+    DRAFTS_METADATA_PATH.write_text(json.dumps(draft_list, indent=2))
 
 
 if __name__ == "__main__":
