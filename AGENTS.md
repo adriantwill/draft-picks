@@ -1,6 +1,6 @@
 # Fantasy Football Draft Data Project Notes
 
-Last updated: 2026-07-17
+Last updated: 2026-07-20
 
 ## Goal
 
@@ -33,7 +33,7 @@ One training row represents an observed pick:
 - State immediately before the pick
 - Candidate who was selected
 - State or scarcity implied immediately after selecting that candidate
-- Final team-level outcome used as the label
+- Three final team-level outcomes used as labels
 
 At inference time:
 
@@ -41,10 +41,10 @@ At inference time:
 2. Create one candidate row for every available player.
 3. Simulate selecting each candidate.
 4. Recalculate candidate-specific roster fit and remaining-player scarcity.
-5. Score all candidates.
-6. Recommend the candidate with the highest expected team outcome.
+5. Predict overall team outcome, drafted-player contribution, and drafted-starter retention for every candidate.
+6. Rank candidates using an explicit recommendation rule and return the associated `player_id`.
 
-Historical data contains only the action actually taken, not outcomes for every alternative action. The model therefore learns associations between observed decisions and later team success. This is useful, but it is not proof that an unchosen alternative would have performed worse.
+Historical data contains only the action actually taken, not outcomes for every alternative action. The model therefore learns associations between observed decisions and later team success. Held-out historical testing can measure prediction error for observed picks, but it cannot directly prove that an unchosen recommendation would have produced a better result. Recommendation quality ultimately needs a transparent draft simulator or prospective drafts.
 
 Target league filters:
 
@@ -108,7 +108,7 @@ Clean modeling tables later:
 - League context features
 - Draft state before pick
 - Player features
-- Team outcome label
+- Team outcome labels
 
 ## Draft Pick Features
 
@@ -184,29 +184,22 @@ Important interactions include:
 
 These interactions let the model learn ideas such as "another WR is less useful after this team already drafted four WRs" or "ADP matters more early than late." Alternatives are explicit interaction columns, separate models by draft phase, or a nonlinear model such as gradient-boosted trees. Linear regression remains a useful interpretable baseline.
 
-## Outcome Label Idea
+## Outcome Targets
 
-Preferred target:
+Current code in `src/organize_draft_data.py` computes three separate team-level outcomes over weeks 1-17:
 
-- Normalized team scoring over an early-season window, initially weeks 1-17 (potentially just weeks 1-12)
+- `total_weekly_z`: average weekly within-league z-score of team points after removing kicker and defense points. This measures total team success and therefore includes help from waivers, trades, and lineup decisions.
+- `total_start_ratio`: average fraction of the seven offensive starter slots occupied by players originally drafted by that team. This measures drafted-player retention, not player quality.
+- `team_player_impact`: fraction of the team's offensive points contributed by originally drafted players while starting for that team. `main.py` currently stores this as `target_score`; rename it to something clearer such as `drafted_points_share`.
 
-Need normalize team scores by league format. Example: 120 points in a one-flex league is more impressive than 120 points in a three-flex league.
+Keeping these outcomes separate avoids the signed-score problem caused by multiplying weekly z-score by a retention fraction. Together they distinguish a strong original draft from a team rescued by waiver-wire players. They are targets, not input features, because their actual values are unavailable on draft day.
 
-Possible normalization:
+The first multi-output model should predict all three values. Report separate metrics for each target. Do not average the raw predictions because weekly z-score and the two 0-1 ratios use different scales and meanings. Initial recommendation behavior should rank primarily by predicted weekly z-score, use predicted drafted-points share as the first tie-breaker, and predicted start ratio as the second tie-breaker. Revisit weighting only after inspecting held-out prediction distributions.
 
-- Team weekly points divided by league weekly average
-- Team weekly points z-score within league/week
-- Median normalized team score over weeks 1-17
-- Percentile rank within league over weeks 1-17
+Before large-scale outcome collection, validate two edge cases in `draft_impact()`:
 
-Weekly within-league z-score direction is good because it compares teams against their actual competition and league format. Current code uses all 17 weeks, while the intended first target uses weeks 1-17. Choose the window before large-scale outcome collection.
-
-Current code multiplies each weekly team z-score by the fraction of starters who were originally drafted. This does not cleanly measure either team strength or drafted-player production. In particular, multiplying a negative z-score by a small fraction moves a bad result toward zero and can make it look better. Prefer one clear label first:
-
-- Unweighted team scoring z-score for team outcome, or
-- A separately computed score using points contributed by originally drafted players
-
-Keep drafted-starter retention as a diagnostic or separate feature/target rather than multiplying it into team performance without validating the meaning.
+- Divide season aggregates by the number of successfully collected weeks rather than always by 17 when API calls fail.
+- Define behavior when within-week team-point standard deviation is zero.
 
 ## ADP Sources
 
@@ -267,56 +260,53 @@ Important implementation note:
 
 Always store raw API responses or raw normalized tables before cleaning. If a filter or feature is wrong later, raw data avoids needing to crawl again.
 
-## Current Training Function Review
+## Current Progress Snapshot
 
-### Good direction
+### Completed
 
-- Uses ADP as player-value baseline instead of attempting a second player projection model.
-- Builds one row per observed decision.
-- Captures current team's position counts before each pick.
-- Captures league-wide position counts before each pick.
-- Adds per-team and per-pick positional rates for league-size and draft-stage context.
-- Encodes candidate position with separate indicator columns.
-- Attempts to remove previous selections and calculate remaining alternatives after the candidate pick.
-- Adds candidate-to-next-best positional ADP gap.
-- Uses team-level performance rather than assigning individual fantasy points as the objective.
-- Filters league formats, reducing unrelated variation.
-- Computes overall and positional ranks after sorting within season.
+- Project files now use paths rooted at the repository and separate crawl, scrape, and clean data directories.
+- `data/clean/drafts_metadata.json` exists and has been tested end to end with five drafts from 2022-2024.
+- The proof-of-concept metadata contains 627 offensive picks; 624 produce feature rows and three lack matched ADP, a 0.48% skip rate.
+- `main()` calls `train_model()`, and `train_table()` returns one row per usable observed pick.
+- Historical ADP is loaded from the preseason-only `adp_all.csv`, not the end-of-season results join.
+- ADP `player_id` is loaded as a string, matching Sleeper IDs. Drafted players are now correctly removed from the remaining pool.
+- Picks without ADP are skipped as training rows after their real roster and league state is updated, preserving later-pick context.
+- Candidate position indicators, own-team position counts, league-wide counts, per-team rates, prior-pick positional shares, next/second-best positional ADP, and positional gaps are present.
+- Positional shares now divide by `pick_no - 1`, with zero defined for the first pick.
+- `src/organize_draft_data.py` computes three separate outcomes: weekly team z-score, drafted-starter ratio, and drafted-player point share.
+- `main.py` has moved from `LinearRegression` to `HistGradientBoostingRegressor` and identifies all three training targets.
 
-### Current blockers before `df` is trainable
+### Immediate blockers
 
-- `data/drafts_metadata.json` is currently absent, so the produced DataFrame cannot be inspected end to end.
-- `main()` calls `draft_info()`, not `train_model()`, and `draft_info()` currently replaces the collected draft list with one hard-coded draft.
-- `pos_gap` constructs keys using uppercase positions such as `next_best_WR`, while remaining-player columns use lowercase suffixes such as `next_best_wr`.
-- `merged.csv` stores numeric player IDs as floats while Sleeper pick IDs are strings. Comparing them directly means drafted players may never be removed from the remaining pool.
-- Original string `player_position` remains in each row alongside numeric indicator columns. It must remain metadata or be excluded from `X`.
-- Target selection uses invalid tuple-style DataFrame indexing.
-- Later assignments overwrite the intended chronological split, make train and test identical, and leave `target_score` inside `X`. This is direct target leakage.
-- Missing ADP/rank values need an explicit filter, imputation, or missing-value policy.
-- Remaining-player `.iloc[0]` and `.iloc[1]` lookups need defined behavior when fewer than two matched players remain.
-- Positional share should represent prior selections divided by prior picks. Current division by `pick_no` is slightly different, especially in early rounds.
+- `main.py` creates one estimator and calls `.fit()` on that same object three times. `impact_model`, `z_model`, and `start_ratio_model` therefore all reference the same final estimator trained only on `start_ratio`. Create three independent named estimators or use `MultiOutputRegressor(HistGradientBoostingRegressor(...))`.
+- Current training filter uses every season before 2025 and creates no test set. Train on seasons before 2024 and hold out complete 2024 drafts for the first pipeline test.
+- `draft_id` and `league_id` are not copied into feature-table metadata. Add them plus a `draft_team_id` so related rows can be traced and grouped.
+- No MAE or R-squared metrics are computed. Evaluate each target separately and compare against ADP-only models on identical held-out rows.
+- Trained estimators are neither returned nor saved, and live candidate scoring is not implemented.
+- `if not pick["adp"]` should become an explicit missing-value check so zero and `NaN` are not conflated.
+- Remaining-player `.iloc[0]` and `.iloc[1]` accesses still need defined behavior when fewer than two players remain at a position.
+- The five-draft sample validates code flow only. Increase to roughly 100 season-balanced drafts after the train/test pipeline works, then scale further.
 
-### Data-design issues to settle now
+### Next feature experiments
 
-- Build remaining-player state from a preseason ADP player table. Current `merged.csv` is an inner join with end-of-season fantasy results, so player membership and ranks can indirectly depend on future information even though fantasy points are not used directly as features.
-- Keep `draft_id`, `league_id`, `roster_id`, `player_id`, and `season` as row metadata for tracing and grouped splitting. Exclude them from model inputs rather than deleting them during row construction.
-- Add a draft-team group key because every pick from one team shares the same outcome.
-- The same final team target is attached to every pick made by that team. This supplies a team-level reward but creates noisy credit assignment and correlated observations.
-- Current state features describe total positional demand but not its distribution. Add how many opposing teams have filled or still need each starting position.
-- The current linear specification lacks candidate-state interactions, so roster context cannot properly change candidate ranking.
-- Feature construction for live candidates must exactly match feature construction for historical chosen candidates.
+- Add richer fixed-size summaries of the available pool instead of copying an entire variable-length ADP table into every row.
+- Useful first summaries per position: top 3-5 remaining ADPs, gaps between them, counts expected to go within the next 12 and 24 picks, candidate rank among remaining players, and position mix among the top available players overall.
+- Add how many opposing teams have filled or still need each starting position.
+- Measure each feature group by held-out ablation. Do not assume that more columns improve generalization.
+- Live scoring must eventually construct the same feature semantics for every available candidate, predict three outcome values, attach them to `player_id`, and rank the candidates.
 
-Do not fix all issues by adding complexity at once. First produce a valid, traceable feature table with one shared historical/live feature builder. Then train simple baselines before adding more features.
+The same final team outcomes are attached to every pick made by one team. This creates correlated observations and noisy credit assignment. One million pick rows do not represent one million independent outcome labels; split by complete future seasons or drafts, never by random individual picks.
 
 ## Model Choice
 
 ### Recommendation
 
-Use three stages:
+Use two first-stage comparisons for each of the three targets:
 
-1. **ADP-only baseline:** establishes what the context model must improve upon.
-2. **Ridge regression baseline:** keeps linear behavior interpretable while stabilizing correlated inputs such as ADP, overall rank, positional rank, raw counts, and normalized counts. It still requires explicit candidate-state interactions.
-3. **Histogram gradient-boosted regression:** best first serious model for this tabular task once enough drafts exist.
+1. **ADP-only histogram-boosting baseline:** predicts the target using only candidate ADP.
+2. **Full-context histogram-boosting model:** uses ADP plus candidate, roster, league, and remaining-player context.
+
+`HistGradientBoostingRegressor` is the best first serious model for the current numeric tabular features. Start with three explicitly named estimators because their separate metrics and meanings are easier to inspect. `MultiOutputRegressor` is an equivalent convenience wrapper here: it trains one independent histogram model per target and does not share information between targets.
 
 Gradient-boosted trees fit the problem better than plain linear regression because they can learn:
 
@@ -326,7 +316,7 @@ Gradient-boosted trees fit the problem better than plain linear regression becau
 - Nonlinear scarcity effects and positional runs
 - Interactions between league size, pick number, and positional demand
 
-Plain `LinearRegression` is still valuable as a debugging baseline, but it is unlikely to be the final model. Ridge is safer for the linear baseline because many current inputs are correlated. A random forest is a possible comparison but is not the first choice. Neural networks add complexity without a clear advantage for this structured tabular dataset.
+Linear and Ridge models are not part of the current planned implementation. A random forest supports native multi-output regression but is not the first choice for roughly one million tabular rows because of runtime and memory cost. Neural multi-task models could share representations across targets, but they add complexity without a demonstrated held-out advantage.
 
 A learning-to-rank model sounds aligned with live candidate ordering, but the historical data labels only the selected candidate. It does not provide relevance labels for all alternatives available at the same pick. Continue with regression-style candidate scoring until a defensible comparison or counterfactual label exists.
 
@@ -334,8 +324,10 @@ A learning-to-rank model sounds aligned with live candidate ordering, but the hi
 
 Primary comparison:
 
-- Baseline: rank available candidates using ADP only.
-- Context model: ADP plus candidate, roster, league, and remaining-player context.
+- Baseline: predict each observed target using candidate ADP only.
+- Context model: predict each observed target using ADP plus candidate, roster, league, and remaining-player context.
+- Report MAE and R-squared separately for `weekly_z`, drafted-points share, and drafted-starter ratio.
+- Lower held-out prediction error means context explains observed outcomes better than ADP alone. It does not prove that a different historical recommendation would have caused a better result.
 
 Data splitting:
 
@@ -346,7 +338,7 @@ Data splitting:
 
 Useful offline checks:
 
-- Team-outcome prediction error versus ADP-only baseline
+- Prediction error for each target versus its ADP-only baseline
 - Candidate ranking stability across nearby draft states
 - Recommendation agreement and disagreement with ADP
 - Outcome of observed picks where model strongly disagrees with ADP
@@ -356,7 +348,7 @@ Useful offline checks:
 Limits:
 
 - Historical outcomes exist only for selected players, not unchosen alternatives.
-- Team outcomes include injuries, lineup decisions, waivers, trades, and randomness.
+- `weekly_z` includes injuries, lineup decisions, waivers, trades, and randomness; the other two targets help identify how much of that result came from original draftees.
 - A lower prediction error does not directly prove recommendations beat skilled human drafting.
 - Live-team results require many drafts and seasons before supporting strong conclusions.
 
@@ -373,17 +365,14 @@ Limits:
 - Historical managers usually follow ADP, limiting examples of successful deviations from ADP.
 - A flexible model can learn quirks of league size, draft year, or manager behavior instead of reusable strategy.
 
-## First Milestone
+## First Milestone — Proof of Concept In Progress
 
 Build a tiny proof of concept:
 
-- One seed user
-- One season
-- 50-100 leagues
-- Draft metadata
-- Draft picks
-- Basic league filters
-- Save to local database or parquet
+- Sleeper user/league crawl is working and has found more than 10,000 qualifying draft IDs.
+- Five drafts currently exercise the metadata and feature pipeline end to end.
+- Next scale checkpoint is roughly 100 season-balanced drafts before processing all available drafts.
+- Draft metadata and picks are currently stored in clean JSON; raw-response storage or normalized raw tables remain future work.
 
 Success criteria:
 
@@ -392,17 +381,17 @@ Success criteria:
 - Can count drafts, picks, leagues, and unique players
 - Can identify incomplete or unusual drafts
 
-## Second Milestone
+## Second Milestone — Outcome Collection In Progress
 
 Add team outcomes:
 
-- Fetch weeks 1-17 matchups
-- Compute team weekly points
-- Normalize within league/week
-- Aggregate to team outcome
-- Join each pick to drafting team's outcome
+- Weeks 1-17 matchups are fetched for the proof-of-concept drafts.
+- Team offensive points are normalized within league/week as z-scores.
+- Drafted-starter retention and drafted-player contribution share are also aggregated.
+- All three team outcomes are attached to every observed pick from that team.
+- Before scaling, track successfully collected weeks and guard zero-variance league weeks.
 
-## Third Milestone
+## Third Milestone — Basic Features In Progress
 
 Add modeling features:
 
@@ -411,6 +400,7 @@ Add modeling features:
 - Add draft-state features before each pick
 - Add team roster construction before each pick
 - Add positional scarcity features
+- Add richer fixed-size remaining-pool summaries after the baseline model works
 
 Success criteria:
 
@@ -419,28 +409,31 @@ Success criteria:
 - Candidate-state interactions allow roster needs to change candidate ranking.
 - Overall rank is computed within the sorted season, not from the original DataFrame index.
 
-## Fourth Milestone
+## Fourth Milestone — Next
 
 Train and evaluate candidate scorers:
 
-1. Build an ADP-only baseline.
-2. Train an interpretable Ridge baseline with explicit interactions.
-3. Compare against histogram gradient-boosted regression after dataset is large enough.
-4. Hold out complete drafts and future seasons.
-5. Measure feature groups with ablation tests.
-6. Simulate live picks by scoring every available candidate.
+1. Fix the three-estimator overwrite bug.
+2. Add traceable draft/team metadata to feature rows.
+3. Hold out 2024 and compute per-target MAE and R-squared.
+4. Build ADP-only histogram baselines for all three targets.
+5. Compare full-context histogram models on identical held-out rows.
+6. Increase from five to roughly 100 season-balanced drafts and rerun validation.
+7. Measure feature groups with ablation tests.
+8. Add live scoring that predicts three outcomes for every available candidate and returns ranked `player_id` values.
 
 Success criteria:
 
-- Context model beats ADP-only baseline on held-out team-outcome prediction.
+- Context models beat their ADP-only baselines on held-out outcome prediction.
 - Recommendations change when roster or remaining-player context changes.
 - Early-round recommendations remain more ADP-driven than later-round recommendations.
 - Results remain reasonable across 10-12 team leagues.
 
 ## Open Questions
 
-- Is weeks 1-17 the best balance between outcome stability and draft attribution?
-- Which explicit interactions are enough for the linear baseline?
-- Does a nonlinear model materially outperform the interpretable baseline?
+- Is weeks 1-17 the best balance between outcome stability and draft attribution, or should weeks 1-12 be compared?
+- Should recommendations use weekly z-score with tie-breakers, or a normalized weighted combination of all three predictions?
+- Do richer remaining-pool summaries materially improve held-out results over next/second-best positional ADP alone?
 - How should missing historical ADP players be handled?
-- How many leagues are enough for first useful experiment?
+- How many complete draft-team outcomes are enough for the first useful experiment?
+- Should recommendation policies eventually be tested with a transparent draft simulator, prospective drafts, or both?

@@ -4,7 +4,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import HistGradientBoostingRegressor
 
 from src.data_types import Draft
 
@@ -139,9 +139,14 @@ def train_model():
             ", "
         )
     ]
-    y_train = train["weekly_z"]
-    model = LinearRegression()
-    model.fit(X_train, y_train)
+    y_train_z = train["weekly_z"]
+    y_train_impact = train["target_score"]
+    y_train_start_ratio = train["start_ratio"]
+    impact_model = HistGradientBoostingRegressor().fit(X_train, y_train_impact)
+    z_model = HistGradientBoostingRegressor().fit(X_train, y_train_z)
+    start_ratio_model = HistGradientBoostingRegressor().fit(
+        X_train, y_train_start_ratio
+    )
 
 
 if __name__ == "__main__":
