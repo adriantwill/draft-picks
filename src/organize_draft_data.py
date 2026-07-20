@@ -94,7 +94,7 @@ def draft_info():
     draft_list: list[Draft] = []
     adp_csv_original = pd.read_csv(ADP_CSV_PATH, dtype={"player_id": "string"})
     print(adp_csv_original.head().dtypes)
-    for draft in list(good_drafts)[:5]:
+    for draft in list(good_drafts)[:100]:
         response = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}")
         if not response or type(response) is not dict:
             continue

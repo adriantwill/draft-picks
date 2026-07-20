@@ -4,6 +4,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import HistGradientBoostingRegressor
+from sklearn.metrics import mean_absolute_error
 
 from src.data_types import Draft
 from src.path import ADP_CSV_PATH, DRAFTS_METADATA_PATH
@@ -120,13 +121,24 @@ def train_table() -> list[dict[str, Any]]:
 def train_model():
     df = pd.DataFrame(train_table())
     train = df[df["season"] < 2025]
+    test = df[df["season"] >= 2025]
     X_train = train[
         "pick_no, round, draft_slot, adp, overall_rank, pos_rank, team_count, is_qb, is_rb, is_wr, is_te, my_qb_picked, my_rb_picked, my_wr_picked, my_te_picked, total_qb_picked, total_rb_picked, total_wr_picked, total_te_picked, next_best_qb, next_best_rb, next_best_wr, next_best_te, second_best_qb, second_best_rb, second_best_wr, second_best_te, pos_gap, wr_per_team, wr_picked_normalized, rb_per_team, rb_picked_normalized, qb_per_team, qb_picked_normalized, te_per_team, te_picked_normalized".split(
             ", "
         )
     ]
     y_train = train["mean_drafted_starter_points_z"]
+    X_test = test[
+        "pick_no, round, draft_slot, adp, overall_rank, pos_rank, team_count, is_qb, is_rb, is_wr, is_te, my_qb_picked, my_rb_picked, my_wr_picked, my_te_picked, total_qb_picked, total_rb_picked, total_wr_picked, total_te_picked, next_best_qb, next_best_rb, next_best_wr, next_best_te, second_best_qb, second_best_rb, second_best_wr, second_best_te, pos_gap, wr_per_team, wr_picked_normalized, rb_per_team, rb_picked_normalized, qb_per_team, qb_picked_normalized, te_per_team, te_picked_normalized".split(
+            ", "
+        )
+    ]
+    y_test = test["mean_drafted_starter_points_z"]
     model = HistGradientBoostingRegressor().fit(X_train, y_train)
+    estimate = model.predict(X_test)
+    random_guess = np.full(len(estimate), np.mean(y_train))
+    print(random_guess)
+    print(mean_absolute_error(y_test, random_guess))
 
 
 if __name__ == "__main__":
