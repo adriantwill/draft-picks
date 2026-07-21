@@ -38,7 +38,11 @@ def draft_impact(draft: Draft, all_players: AllPlayers) -> Draft:
         )
         if not matchups or type(matchups) is not list:
             continue
+        print(f"https://api.sleeper.app/v1/league/{draft['league_id']}/matchups/{i}")
         for matchup in matchups:
+            if matchup["players_points"] == {}:
+                continue
+            print(matchup["players_points"])
             roster = matchup["roster_id"]
             points = matchup["points"]
             for i, pos in enumerate(["DEF", "K"]):
@@ -93,7 +97,6 @@ def draft_info():
         all_players: AllPlayers = json.load(f)
     draft_list: list[Draft] = []
     adp_csv_original = pd.read_csv(ADP_CSV_PATH, dtype={"player_id": "string"})
-    print(adp_csv_original.head().dtypes)
     for draft in list(good_drafts)[:100]:
         response = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}")
         if not response or type(response) is not dict:
@@ -107,6 +110,7 @@ def draft_info():
             "total_weekly_z": [],
             "total_start_ratio": [],
             "team_player_impact": [],
+            "mean_drafted_starter_points_z": [],
         }
         adp_csv = adp_csv_original.loc[
             adp_csv_original["year"] == int(response.get("season"))
@@ -127,7 +131,6 @@ def draft_info():
             pos_rank = None
             adp = None
             match = adp_csv[adp_csv["player_id"] == pick.get("player_id")]
-            print(match)
             if not match.empty:
                 overall_rank = int(match.index[0]) + 1
                 pos_rank = int(match.iloc[0]["pos_rank"])

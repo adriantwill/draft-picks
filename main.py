@@ -105,6 +105,8 @@ def train_table() -> list[dict[str, Any]]:
             row["mean_drafted_starter_points_z"] = draft[
                 "mean_drafted_starter_points_z"
             ][pick["roster_id"] - 1]
+            if pd.isna(row["mean_drafted_starter_points_z"]):
+                print(draft)
             team_pos_count[pos_to_num[pick["player_position"]]][
                 pick["roster_id"] - 1
             ] += 1
@@ -136,9 +138,8 @@ def train_model():
     y_test = test["mean_drafted_starter_points_z"]
     model = HistGradientBoostingRegressor().fit(X_train, y_train)
     estimate = model.predict(X_test)
-    random_guess = np.full(len(estimate), np.mean(y_train))
-    print(random_guess)
-    print(mean_absolute_error(y_test, random_guess))
+
+    print(mean_absolute_error(y_test, estimate))
 
 
 if __name__ == "__main__":

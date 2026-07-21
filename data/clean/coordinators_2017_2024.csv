@@ -1,0 +1,257 @@
+year,team,head_coach,offensive_coordinator,offensive_playcaller,prev_hc_team,prev_oc_team,hc_previous_role,oc_previous_role,hc_background,hc_offense,hc_playcaller,oc_playcaller,hired,oc_hired,hc_new_hire,oc_new_hire
+2017,ARI,Bruce Arians,Harold Goodwin,Bruce Arians,IND,IND,interim head coach / offensive coordinator,offensive line coach,offense,true,true,false,2013,2013,false,false
+2017,ATL,Dan Quinn,Steve Sarkisian,Steve Sarkisian,SEA,Alabama,defensive coordinator,offensive coordinator,defense,false,false,true,2015,2017,false,true
+2017,BAL,John Harbaugh,Marty Mornhinweg,Marty Mornhinweg,PHI,BAL,defensive backs coach,quarterbacks coach,special_teams,false,false,true,2008,2016,false,false
+2017,BUF,Sean McDermott,Rick Dennison,Rick Dennison,CAR,DEN,defensive coordinator,offensive coordinator,defense,false,false,true,2017,2017,true,true
+2017,CAR,Ron Rivera,Mike Shula,Mike Shula,LAC,CAR,defensive coordinator,quarterbacks coach,defense,false,false,true,2011,2013,false,false
+2017,CHI,John Fox,Dowell Loggains,Dowell Loggains,DEN,CHI,head coach,quarterbacks coach,defense,false,false,true,2015,2016,false,false
+2017,CIN,Marvin Lewis,Ken Zampese,Ken Zampese,WAS,CIN,defensive coordinator,quarterbacks coach,defense,false,false,true,2003,2016,false,false
+2017,CLE,Hue Jackson,NONE,Hue Jackson,CIN,,offensive coordinator,,offense,true,true,false,2016,,false,false
+2017,DAL,Jason Garrett,Scott Linehan,Scott Linehan,DAL,DET,offensive coordinator / interim head coach,offensive coordinator,offense,true,false,true,2010,2014,false,false
+2017,DEN,Vance Joseph,Mike McCoy,Mike McCoy,MIA,LAC,defensive coordinator,head coach,defense,false,false,true,2017,2017,true,true
+2017,DET,Jim Caldwell,Jim Bob Cooter,Jim Bob Cooter,BAL,DET,offensive coordinator,quarterbacks coach,offense,true,false,true,2014,2015,false,false
+2017,GB,Mike McCarthy,Edgar Bennett,Mike McCarthy,SF,GB,offensive coordinator,wide receivers coach,offense,true,true,false,2006,2015,false,false
+2017,HOU,Bill O'Brien,NONE,Bill O'Brien,Penn State,,head coach,,offense,true,true,false,2014,,false,false
+2017,IND,Chuck Pagano,Rob Chudzinski,Rob Chudzinski,BAL,IND,defensive coordinator,associate head coach,defense,false,false,true,2012,2016,false,false
+2017,JAX,Doug Marrone,Nathaniel Hackett,Nathaniel Hackett,JAX,JAX,interim head coach / offensive line,quarterbacks coach,offense,true,false,true,2017,2016,true,false
+2017,KC,Andy Reid,Matt Nagy,Andy Reid,PHI,KC,head coach,quarterbacks coach,offense,true,true,false,2013,2016,false,false
+2017,LAC,Anthony Lynn,Ken Whisenhunt,Ken Whisenhunt,BUF,TEN,interim head coach / offensive coordinator,head coach,offense,true,false,true,2017,2016,true,false
+2017,LAR,Sean McVay,Matt LaFleur,Sean McVay,WAS,ATL,offensive coordinator,quarterbacks coach,offense,true,true,false,2017,2017,true,true
+2017,LV,Jack Del Rio,Todd Downing,Todd Downing,DEN,LV,defensive coordinator,quarterbacks coach,defense,false,false,true,2015,2017,false,true
+2017,MIA,Adam Gase,Clyde Christensen,Adam Gase,CHI,IND,offensive coordinator,quarterbacks coach,offense,true,true,false,2016,2016,false,false
+2017,MIN,Mike Zimmer,Pat Shurmur,Pat Shurmur,CIN,MIN,defensive coordinator,tight ends coach / interim offensive coordinator,defense,false,false,true,2014,2016,false,false
+2017,NE,Bill Belichick,Josh McDaniels,Josh McDaniels,NYJ,LAR,assistant head coach / defensive coordinator,offensive coordinator,defense,false,false,true,2000,2012,false,false
+2017,NO,Sean Payton,Pete Carmichael Jr.,Sean Payton,DAL,NO,assistant head coach / quarterbacks,quarterbacks coach,offense,true,true,false,2006,2009,false,false
+2017,NYG,Ben McAdoo,Mike Sullivan,Ben McAdoo,NYG,NYG,offensive coordinator,quarterbacks coach,offense,true,true,false,2016,2016,false,false
+2017,NYJ,Todd Bowles,John Morton,John Morton,ARI,NO,defensive coordinator,wide receivers coach,defense,false,false,true,2015,2017,false,true
+2017,PHI,Doug Pederson,Frank Reich,Doug Pederson,KC,LAC,offensive coordinator,offensive coordinator,offense,true,true,false,2016,2016,false,false
+2017,PIT,Mike Tomlin,Todd Haley,Todd Haley,MIN,KC,defensive coordinator,head coach,defense,false,false,true,2007,2012,false,false
+2017,SEA,Pete Carroll,Darrell Bevell,Darrell Bevell,USC,MIN,head coach,offensive coordinator,defense,false,false,true,2010,2011,false,false
+2017,SF,Kyle Shanahan,NONE,Kyle Shanahan,ATL,,offensive coordinator,,offense,true,true,false,2017,,true,false
+2017,TB,Dirk Koetter,Todd Monken,Dirk Koetter,TB,Southern Miss,offensive coordinator,head coach,offense,true,true,false,2016,2016,false,false
+2017,TEN,Mike Mularkey,Terry Robiskie,Terry Robiskie,TEN,ATL,interim head coach / assistant head coach,assistant head coach / wide receivers,offense,true,false,true,2016,2016,false,false
+2017,WAS,Jay Gruden,Matt Cavanaugh,Jay Gruden,CIN,WAS,offensive coordinator,quarterbacks coach,offense,true,true,false,2014,2017,false,true
+2018,ARI,Steve Wilks,Mike McCoy,Mike McCoy,CAR,DEN,defensive coordinator,offensive coordinator,defense,false,false,true,2018,2018,true,true
+2018,ATL,Dan Quinn,Steve Sarkisian,Steve Sarkisian,SEA,Alabama,defensive coordinator,offensive coordinator,defense,false,false,true,2015,2017,false,false
+2018,BAL,John Harbaugh,Marty Mornhinweg,Marty Mornhinweg,PHI,BAL,defensive backs coach,quarterbacks coach,special_teams,false,false,true,2008,2016,false,false
+2018,BUF,Sean McDermott,Brian Daboll,Brian Daboll,CAR,Alabama,defensive coordinator,offensive coordinator,defense,false,false,true,2017,2018,false,true
+2018,CAR,Ron Rivera,Norv Turner,Norv Turner,LAC,MIN,defensive coordinator,offensive coordinator,defense,false,false,true,2011,2018,false,true
+2018,CHI,Matt Nagy,Mark Helfrich,Matt Nagy,KC,Oregon,offensive coordinator,head coach,offense,true,true,false,2018,2018,true,true
+2018,CIN,Marvin Lewis,Bill Lazor,Bill Lazor,WAS,CIN,defensive coordinator,quarterbacks coach,defense,false,false,true,2003,2017,false,true
+2018,CLE,Hue Jackson,Todd Haley,Todd Haley,CIN,PIT,offensive coordinator,offensive coordinator,offense,true,false,true,2016,2018,false,true
+2018,DAL,Jason Garrett,Scott Linehan,Scott Linehan,DAL,DET,offensive coordinator / interim head coach,offensive coordinator,offense,true,false,true,2010,2014,false,false
+2018,DEN,Vance Joseph,Bill Musgrave,Bill Musgrave,MIA,DEN,defensive coordinator,quarterbacks coach,defense,false,false,true,2017,2017,false,true
+2018,DET,Matt Patricia,Jim Bob Cooter,Jim Bob Cooter,NE,DET,defensive coordinator,quarterbacks coach,defense,false,false,true,2018,2015,true,false
+2018,GB,Mike McCarthy,Joe Philbin,Mike McCarthy,SF,IND,offensive coordinator,assistant head coach / offensive line,offense,true,true,false,2006,2018,false,true
+2018,HOU,Bill O'Brien,NONE,Bill O'Brien,Penn State,,head coach,,offense,true,true,false,2014,,false,false
+2018,IND,Frank Reich,Nick Sirianni,Frank Reich,PHI,LAC,offensive coordinator,wide receivers coach,offense,true,true,false,2018,2018,true,true
+2018,JAX,Doug Marrone,Nathaniel Hackett,Nathaniel Hackett,JAX,JAX,interim head coach / offensive line,quarterbacks coach,offense,true,false,true,2017,2016,false,false
+2018,KC,Andy Reid,Eric Bieniemy,Andy Reid,PHI,KC,head coach,running backs coach,offense,true,true,false,2013,2018,false,true
+2018,LAC,Anthony Lynn,Ken Whisenhunt,Ken Whisenhunt,BUF,TEN,interim head coach / offensive coordinator,head coach,offense,true,false,true,2017,2016,false,false
+2018,LAR,Sean McVay,NONE,Sean McVay,WAS,,offensive coordinator,,offense,true,true,false,2017,,false,false
+2018,LV,Jon Gruden,Greg Olson,Jon Gruden,TB,LAR,head coach,quarterbacks coach,offense,true,true,false,2018,2018,true,true
+2018,MIA,Adam Gase,Dowell Loggains,Adam Gase,CHI,CHI,offensive coordinator,offensive coordinator,offense,true,true,false,2016,2018,false,true
+2018,MIN,Mike Zimmer,John DeFilippo,John DeFilippo,CIN,PHI,defensive coordinator,quarterbacks coach,defense,false,false,true,2014,2018,false,true
+2018,NE,Bill Belichick,Josh McDaniels,Josh McDaniels,NYJ,LAR,assistant head coach / defensive coordinator,offensive coordinator,defense,false,false,true,2000,2012,false,false
+2018,NO,Sean Payton,Pete Carmichael Jr.,Sean Payton,DAL,NO,assistant head coach / quarterbacks,quarterbacks coach,offense,true,true,false,2006,2009,false,false
+2018,NYG,Pat Shurmur,Mike Shula,Pat Shurmur,MIN,CAR,offensive coordinator,offensive coordinator,offense,true,true,false,2018,2018,true,true
+2018,NYJ,Todd Bowles,Jeremy Bates,Jeremy Bates,ARI,NYJ,defensive coordinator,quarterbacks coach,defense,false,false,true,2015,2018,false,true
+2018,PHI,Doug Pederson,Mike Groh,Doug Pederson,KC,PHI,offensive coordinator,wide receivers coach,offense,true,true,false,2016,2018,false,true
+2018,PIT,Mike Tomlin,Randy Fichtner,Randy Fichtner,MIN,PIT,defensive coordinator,quarterbacks coach,defense,false,false,true,2007,2018,false,true
+2018,SEA,Pete Carroll,Brian Schottenheimer,Brian Schottenheimer,USC,IND,head coach,quarterbacks coach,defense,false,false,true,2010,2018,false,true
+2018,SF,Kyle Shanahan,NONE,Kyle Shanahan,ATL,,offensive coordinator,,offense,true,true,false,2017,,false,false
+2018,TB,Dirk Koetter,Todd Monken,Dirk Koetter,TB,Southern Miss,offensive coordinator,head coach,offense,true,true,false,2016,2016,false,false
+2018,TEN,Mike Vrabel,Matt LaFleur,Matt LaFleur,HOU,LAR,defensive coordinator,offensive coordinator,defense,false,false,true,2018,2018,true,true
+2018,WAS,Jay Gruden,Matt Cavanaugh,Jay Gruden,CIN,WAS,offensive coordinator,quarterbacks coach,offense,true,true,false,2014,2017,false,false
+2019,ARI,Kliff Kingsbury,NONE,Kliff Kingsbury,USC,,offensive coordinator / quarterbacks,,offense,true,true,false,2019,,true,false
+2019,ATL,Dan Quinn,Dirk Koetter,Dirk Koetter,SEA,TB,defensive coordinator,head coach,defense,false,false,true,2015,2019,false,true
+2019,BAL,John Harbaugh,Greg Roman,Greg Roman,PHI,BAL,defensive backs coach,tight ends / assistant head coach,special_teams,false,false,true,2008,2019,false,true
+2019,BUF,Sean McDermott,Brian Daboll,Brian Daboll,CAR,Alabama,defensive coordinator,offensive coordinator,defense,false,false,true,2017,2018,false,false
+2019,CAR,Ron Rivera,Norv Turner,Norv Turner,LAC,MIN,defensive coordinator,offensive coordinator,defense,false,false,true,2011,2018,false,false
+2019,CHI,Matt Nagy,Mark Helfrich,Matt Nagy,KC,Oregon,offensive coordinator,head coach,offense,true,true,false,2018,2018,false,false
+2019,CIN,Zac Taylor,Brian Callahan,Zac Taylor,LAR,LV,quarterbacks coach,quarterbacks coach,offense,true,true,false,2019,2019,true,true
+2019,CLE,Freddie Kitchens,Todd Monken,Freddie Kitchens,CLE,TB,offensive coordinator,offensive coordinator,offense,true,true,false,2019,2019,true,true
+2019,DAL,Jason Garrett,Kellen Moore,Kellen Moore,DAL,DAL,offensive coordinator / interim head coach,quarterbacks coach,offense,true,false,true,2010,2019,false,true
+2019,DEN,Vic Fangio,Rich Scangarello,Rich Scangarello,CHI,SF,defensive coordinator,quarterbacks coach,defense,false,false,true,2019,2019,true,true
+2019,DET,Matt Patricia,Darrell Bevell,Darrell Bevell,NE,SEA,defensive coordinator,offensive coordinator,defense,false,false,true,2018,2019,false,true
+2019,GB,Matt LaFleur,Nathaniel Hackett,Matt LaFleur,TEN,JAX,offensive coordinator,offensive coordinator,offense,true,true,false,2019,2019,true,true
+2019,HOU,Bill O'Brien,Tim Kelly,Bill O'Brien,Penn State,HOU,head coach,tight ends coach,offense,true,true,false,2014,2019,false,true
+2019,IND,Frank Reich,Nick Sirianni,Frank Reich,PHI,LAC,offensive coordinator,wide receivers coach,offense,true,true,false,2018,2018,false,false
+2019,JAX,Doug Marrone,John DeFilippo,John DeFilippo,JAX,MIN,interim head coach / offensive line,offensive coordinator,offense,true,false,true,2017,2019,false,true
+2019,KC,Andy Reid,Eric Bieniemy,Andy Reid,PHI,KC,head coach,running backs coach,offense,true,true,false,2013,2018,false,false
+2019,LAC,Anthony Lynn,Ken Whisenhunt,Ken Whisenhunt,BUF,TEN,interim head coach / offensive coordinator,head coach,offense,true,false,true,2017,2016,false,false
+2019,LAR,Sean McVay,NONE,Sean McVay,WAS,,offensive coordinator,,offense,true,true,false,2017,,false,false
+2019,LV,Jon Gruden,Greg Olson,Jon Gruden,TB,LAR,head coach,quarterbacks coach,offense,true,true,false,2018,2018,false,false
+2019,MIA,Brian Flores,Chad O'Shea,Chad O'Shea,NE,NE,linebackers coach / defensive play-caller,wide receivers coach,defense,false,false,true,2019,2019,true,true
+2019,MIN,Mike Zimmer,Kevin Stefanski,Kevin Stefanski,CIN,MIN,defensive coordinator,quarterbacks coach,defense,false,false,true,2014,2018,false,true
+2019,NE,Bill Belichick,Josh McDaniels,Josh McDaniels,NYJ,LAR,assistant head coach / defensive coordinator,offensive coordinator,defense,false,false,true,2000,2012,false,false
+2019,NO,Sean Payton,Pete Carmichael Jr.,Sean Payton,DAL,NO,assistant head coach / quarterbacks,quarterbacks coach,offense,true,true,false,2006,2009,false,false
+2019,NYG,Pat Shurmur,Mike Shula,Pat Shurmur,MIN,CAR,offensive coordinator,offensive coordinator,offense,true,true,false,2018,2018,false,false
+2019,NYJ,Adam Gase,Dowell Loggains,Adam Gase,MIA,MIA,head coach,offensive coordinator,offense,true,true,false,2019,2019,true,true
+2019,PHI,Doug Pederson,Mike Groh,Doug Pederson,KC,PHI,offensive coordinator,wide receivers coach,offense,true,true,false,2016,2018,false,false
+2019,PIT,Mike Tomlin,Randy Fichtner,Randy Fichtner,MIN,PIT,defensive coordinator,quarterbacks coach,defense,false,false,true,2007,2018,false,false
+2019,SEA,Pete Carroll,Brian Schottenheimer,Brian Schottenheimer,USC,IND,head coach,quarterbacks coach,defense,false,false,true,2010,2018,false,false
+2019,SF,Kyle Shanahan,NONE,Kyle Shanahan,ATL,,offensive coordinator,,offense,true,true,false,2017,,false,false
+2019,TB,Bruce Arians,Byron Leftwich,Byron Leftwich,ARI,ARI,head coach,offensive coordinator,offense,true,false,true,2019,2019,true,true
+2019,TEN,Mike Vrabel,Arthur Smith,Arthur Smith,HOU,TEN,defensive coordinator,tight ends coach,defense,false,false,true,2018,2019,false,true
+2019,WAS,Jay Gruden,Kevin O'Connell,Jay Gruden,CIN,WAS,offensive coordinator,quarterbacks coach,offense,true,true,false,2014,2019,false,true
+2020,ARI,Kliff Kingsbury,NONE,Kliff Kingsbury,USC,,offensive coordinator / quarterbacks,,offense,true,true,false,2019,,false,false
+2020,ATL,Dan Quinn,Dirk Koetter,Dirk Koetter,SEA,TB,defensive coordinator,head coach,defense,false,false,true,2015,2019,false,false
+2020,BAL,John Harbaugh,Greg Roman,Greg Roman,PHI,BAL,defensive backs coach,tight ends / assistant head coach,special_teams,false,false,true,2008,2019,false,false
+2020,BUF,Sean McDermott,Brian Daboll,Brian Daboll,CAR,Alabama,defensive coordinator,offensive coordinator,defense,false,false,true,2017,2018,false,false
+2020,CAR,Matt Rhule,Joe Brady,Joe Brady,Baylor,LSU,head coach,passing game coordinator / wide receivers,ceo,false,false,true,2020,2020,true,true
+2020,CHI,Matt Nagy,Bill Lazor,Matt Nagy,KC,Penn State,offensive coordinator,offensive analyst,offense,true,true,false,2018,2020,false,true
+2020,CIN,Zac Taylor,Brian Callahan,Zac Taylor,LAR,LV,quarterbacks coach,quarterbacks coach,offense,true,true,false,2019,2019,false,false
+2020,CLE,Kevin Stefanski,Alex Van Pelt,Kevin Stefanski,MIN,CIN,offensive coordinator,quarterbacks coach,offense,true,true,false,2020,2020,true,true
+2020,DAL,Mike McCarthy,Kellen Moore,Kellen Moore,GB,DAL,head coach,quarterbacks coach,offense,true,false,true,2020,2019,true,false
+2020,DEN,Vic Fangio,Pat Shurmur,Pat Shurmur,CHI,NYG,defensive coordinator,head coach,defense,false,false,true,2019,2020,false,true
+2020,DET,Matt Patricia,Darrell Bevell,Darrell Bevell,NE,SEA,defensive coordinator,offensive coordinator,defense,false,false,true,2018,2019,false,false
+2020,GB,Matt LaFleur,Nathaniel Hackett,Matt LaFleur,TEN,JAX,offensive coordinator,offensive coordinator,offense,true,true,false,2019,2019,false,false
+2020,HOU,Bill O'Brien,Tim Kelly,Tim Kelly,Penn State,HOU,head coach,tight ends coach,offense,true,false,true,2014,2019,false,false
+2020,IND,Frank Reich,Nick Sirianni,Frank Reich,PHI,LAC,offensive coordinator,wide receivers coach,offense,true,true,false,2018,2018,false,false
+2020,JAX,Doug Marrone,Jay Gruden,Jay Gruden,JAX,WAS,interim head coach / offensive line,head coach,offense,true,false,true,2017,2020,false,true
+2020,KC,Andy Reid,Eric Bieniemy,Andy Reid,PHI,KC,head coach,running backs coach,offense,true,true,false,2013,2018,false,false
+2020,LAC,Anthony Lynn,Shane Steichen,Shane Steichen,BUF,LAC,interim head coach / offensive coordinator,quarterbacks coach / interim offensive coordinator,offense,true,false,true,2017,2019,false,true
+2020,LAR,Sean McVay,Kevin O'Connell,Sean McVay,WAS,WAS,offensive coordinator,offensive coordinator,offense,true,true,false,2017,2020,false,true
+2020,LV,Jon Gruden,Greg Olson,Jon Gruden,TB,LAR,head coach,quarterbacks coach,offense,true,true,false,2018,2018,false,false
+2020,MIA,Brian Flores,Chan Gailey,Chan Gailey,NE,NYJ,linebackers coach / defensive play-caller,offensive coordinator,defense,false,false,true,2019,2020,false,true
+2020,MIN,Mike Zimmer,Gary Kubiak,Gary Kubiak,CIN,MIN,defensive coordinator,assistant head coach / offensive adviser,defense,false,false,true,2014,2020,false,true
+2020,NE,Bill Belichick,Josh McDaniels,Josh McDaniels,NYJ,LAR,assistant head coach / defensive coordinator,offensive coordinator,defense,false,false,true,2000,2012,false,false
+2020,NO,Sean Payton,Pete Carmichael Jr.,Sean Payton,DAL,NO,assistant head coach / quarterbacks,quarterbacks coach,offense,true,true,false,2006,2009,false,false
+2020,NYG,Joe Judge,Jason Garrett,Jason Garrett,NE,DAL,special teams coordinator / wide receivers,head coach,special_teams,false,false,true,2020,2020,true,true
+2020,NYJ,Adam Gase,Dowell Loggains,Adam Gase,MIA,MIA,head coach,offensive coordinator,offense,true,true,false,2019,2019,false,false
+2020,PHI,Doug Pederson,NONE,Doug Pederson,KC,,offensive coordinator,,offense,true,true,false,2016,,false,false
+2020,PIT,Mike Tomlin,Randy Fichtner,Randy Fichtner,MIN,PIT,defensive coordinator,quarterbacks coach,defense,false,false,true,2007,2018,false,false
+2020,SEA,Pete Carroll,Brian Schottenheimer,Brian Schottenheimer,USC,IND,head coach,quarterbacks coach,defense,false,false,true,2010,2018,false,false
+2020,SF,Kyle Shanahan,NONE,Kyle Shanahan,ATL,,offensive coordinator,,offense,true,true,false,2017,,false,false
+2020,TB,Bruce Arians,Byron Leftwich,Byron Leftwich,ARI,ARI,head coach,offensive coordinator,offense,true,false,true,2019,2019,false,false
+2020,TEN,Mike Vrabel,Arthur Smith,Arthur Smith,HOU,TEN,defensive coordinator,tight ends coach,defense,false,false,true,2018,2019,false,false
+2020,WAS,Ron Rivera,Scott Turner,Scott Turner,CAR,CAR,head coach,quarterbacks coach,defense,false,false,true,2020,2020,true,true
+2021,ARI,Kliff Kingsbury,NONE,Kliff Kingsbury,USC,,offensive coordinator / quarterbacks,,offense,true,true,false,2019,,false,false
+2021,ATL,Arthur Smith,Dave Ragone,Arthur Smith,TEN,CHI,offensive coordinator,passing game coordinator / quarterbacks,offense,true,true,false,2021,2021,true,true
+2021,BAL,John Harbaugh,Greg Roman,Greg Roman,PHI,BAL,defensive backs coach,tight ends / assistant head coach,special_teams,false,false,true,2008,2019,false,false
+2021,BUF,Sean McDermott,Brian Daboll,Brian Daboll,CAR,Alabama,defensive coordinator,offensive coordinator,defense,false,false,true,2017,2018,false,false
+2021,CAR,Matt Rhule,Joe Brady,Joe Brady,Baylor,LSU,head coach,passing game coordinator / wide receivers,ceo,false,false,true,2020,2020,false,false
+2021,CHI,Matt Nagy,Bill Lazor,Matt Nagy,KC,Penn State,offensive coordinator,offensive analyst,offense,true,true,false,2018,2020,false,false
+2021,CIN,Zac Taylor,Brian Callahan,Zac Taylor,LAR,LV,quarterbacks coach,quarterbacks coach,offense,true,true,false,2019,2019,false,false
+2021,CLE,Kevin Stefanski,Alex Van Pelt,Kevin Stefanski,MIN,CIN,offensive coordinator,quarterbacks coach,offense,true,true,false,2020,2020,false,false
+2021,DAL,Mike McCarthy,Kellen Moore,Kellen Moore,GB,DAL,head coach,quarterbacks coach,offense,true,false,true,2020,2019,false,false
+2021,DEN,Vic Fangio,Pat Shurmur,Pat Shurmur,CHI,NYG,defensive coordinator,head coach,defense,false,false,true,2019,2020,false,false
+2021,DET,Dan Campbell,Anthony Lynn,Anthony Lynn,NO,LAC,assistant head coach / tight ends,head coach,ceo,false,false,true,2021,2021,true,true
+2021,GB,Matt LaFleur,Nathaniel Hackett,Matt LaFleur,TEN,JAX,offensive coordinator,offensive coordinator,offense,true,true,false,2019,2019,false,false
+2021,HOU,David Culley,Tim Kelly,Tim Kelly,BAL,HOU,assistant head coach / passing game / wide receivers,tight ends coach,ceo,false,false,true,2021,2019,true,false
+2021,IND,Frank Reich,Marcus Brady,Frank Reich,PHI,IND,offensive coordinator,quarterbacks coach,offense,true,true,false,2018,2021,false,true
+2021,JAX,Urban Meyer,Darrell Bevell,Darrell Bevell,Ohio State,DET,head coach,offensive coordinator / interim head coach,offense,true,false,true,2021,2021,true,true
+2021,KC,Andy Reid,Eric Bieniemy,Andy Reid,PHI,KC,head coach,running backs coach,offense,true,true,false,2013,2018,false,false
+2021,LAC,Brandon Staley,Joe Lombardi,Joe Lombardi,LAR,NO,defensive coordinator,quarterbacks coach,defense,false,false,true,2021,2021,true,true
+2021,LAR,Sean McVay,Kevin O'Connell,Sean McVay,WAS,WAS,offensive coordinator,offensive coordinator,offense,true,true,false,2017,2020,false,false
+2021,LV,Jon Gruden,Greg Olson,Jon Gruden,TB,LAR,head coach,quarterbacks coach,offense,true,true,false,2018,2018,false,false
+2021,MIA,Brian Flores,George Godsey / Eric Studesville,George Godsey / Eric Studesville,NE,MIA,linebackers coach / defensive play-caller,tight ends coach / running backs coach,defense,false,false,true,2019,2021,false,true
+2021,MIN,Mike Zimmer,Klint Kubiak,Klint Kubiak,CIN,MIN,defensive coordinator,quarterbacks coach,defense,false,false,true,2014,2021,false,true
+2021,NE,Bill Belichick,Josh McDaniels,Josh McDaniels,NYJ,LAR,assistant head coach / defensive coordinator,offensive coordinator,defense,false,false,true,2000,2012,false,false
+2021,NO,Sean Payton,Pete Carmichael Jr.,Sean Payton,DAL,NO,assistant head coach / quarterbacks,quarterbacks coach,offense,true,true,false,2006,2009,false,false
+2021,NYG,Joe Judge,Jason Garrett,Jason Garrett,NE,DAL,special teams coordinator / wide receivers,head coach,special_teams,false,false,true,2020,2020,false,false
+2021,NYJ,Robert Saleh,Mike LaFleur,Mike LaFleur,SF,SF,defensive coordinator,passing game coordinator,defense,false,false,true,2021,2021,true,true
+2021,PHI,Nick Sirianni,Shane Steichen,Nick Sirianni,IND,LAC,offensive coordinator,offensive coordinator,offense,true,true,false,2021,2021,true,true
+2021,PIT,Mike Tomlin,Matt Canada,Matt Canada,MIN,PIT,defensive coordinator,quarterbacks coach,defense,false,false,true,2007,2021,false,true
+2021,SEA,Pete Carroll,Shane Waldron,Shane Waldron,USC,LAR,head coach,passing game coordinator,defense,false,false,true,2010,2021,false,true
+2021,SF,Kyle Shanahan,Mike McDaniel,Kyle Shanahan,ATL,SF,offensive coordinator,run game coordinator,offense,true,true,false,2017,2021,false,true
+2021,TB,Bruce Arians,Byron Leftwich,Byron Leftwich,ARI,ARI,head coach,offensive coordinator,offense,true,false,true,2019,2019,false,false
+2021,TEN,Mike Vrabel,Todd Downing,Todd Downing,HOU,TEN,defensive coordinator,tight ends coach,defense,false,false,true,2018,2021,false,true
+2021,WAS,Ron Rivera,Scott Turner,Scott Turner,CAR,CAR,head coach,quarterbacks coach,defense,false,false,true,2020,2020,false,false
+2022,ARI,Kliff Kingsbury,NONE,Kliff Kingsbury,USC,,offensive coordinator / quarterbacks,,offense,true,true,false,2019,,false,false
+2022,ATL,Arthur Smith,Dave Ragone,Arthur Smith,TEN,CHI,offensive coordinator,passing game coordinator / quarterbacks,offense,true,true,false,2021,2021,false,false
+2022,BAL,John Harbaugh,Greg Roman,Greg Roman,PHI,BAL,defensive backs coach,tight ends / assistant head coach,special_teams,false,false,true,2008,2019,false,false
+2022,BUF,Sean McDermott,Ken Dorsey,Ken Dorsey,CAR,BUF,defensive coordinator,quarterbacks coach,defense,false,false,true,2017,2022,false,true
+2022,CAR,Matt Rhule,Ben McAdoo,Ben McAdoo,Baylor,DAL,head coach,consultant,ceo,false,false,true,2020,2022,false,true
+2022,CHI,Matt Eberflus,Luke Getsy,Luke Getsy,IND,GB,defensive coordinator,quarterbacks / passing game coordinator,defense,false,false,true,2022,2022,true,true
+2022,CIN,Zac Taylor,Brian Callahan,Zac Taylor,LAR,LV,quarterbacks coach,quarterbacks coach,offense,true,true,false,2019,2019,false,false
+2022,CLE,Kevin Stefanski,Alex Van Pelt,Kevin Stefanski,MIN,CIN,offensive coordinator,quarterbacks coach,offense,true,true,false,2020,2020,false,false
+2022,DAL,Mike McCarthy,Kellen Moore,Kellen Moore,GB,DAL,head coach,quarterbacks coach,offense,true,false,true,2020,2019,false,false
+2022,DEN,Nathaniel Hackett,Justin Outten,Nathaniel Hackett,GB,GB,offensive coordinator,tight ends coach,offense,true,true,false,2022,2022,true,true
+2022,DET,Dan Campbell,Ben Johnson,Ben Johnson,NO,DET,assistant head coach / tight ends,tight ends / passing game coordinator,ceo,false,false,true,2021,2022,false,true
+2022,GB,Matt LaFleur,Adam Stenavich,Matt LaFleur,TEN,GB,offensive coordinator,offensive line / run game coordinator,offense,true,true,false,2019,2022,false,true
+2022,HOU,Lovie Smith,Pep Hamilton,Pep Hamilton,HOU,HOU,defensive coordinator,quarterbacks / passing game coordinator,defense,false,false,true,2022,2022,true,true
+2022,IND,Frank Reich,Marcus Brady,Frank Reich,PHI,IND,offensive coordinator,quarterbacks coach,offense,true,true,false,2018,2021,false,false
+2022,JAX,Doug Pederson,Press Taylor,Doug Pederson,PHI,IND,head coach,senior offensive assistant,offense,true,true,false,2022,2022,true,true
+2022,KC,Andy Reid,Eric Bieniemy,Andy Reid,PHI,KC,head coach,running backs coach,offense,true,true,false,2013,2018,false,false
+2022,LAC,Brandon Staley,Joe Lombardi,Joe Lombardi,LAR,NO,defensive coordinator,quarterbacks coach,defense,false,false,true,2021,2021,false,false
+2022,LAR,Sean McVay,Liam Coen,Sean McVay,WAS,Kentucky,offensive coordinator,offensive coordinator,offense,true,true,false,2017,2022,false,true
+2022,LV,Josh McDaniels,Mick Lombardi,Josh McDaniels,NE,NE,offensive coordinator,wide receivers coach,offense,true,true,false,2022,2022,true,true
+2022,MIA,Mike McDaniel,Frank Smith,Mike McDaniel,SF,LAC,offensive coordinator,run game coordinator / offensive line,offense,true,true,false,2022,2022,true,true
+2022,MIN,Kevin O'Connell,Wes Phillips,Kevin O'Connell,LAR,LAR,offensive coordinator,tight ends / passing game coordinator,offense,true,true,false,2022,2022,true,true
+2022,NE,Bill Belichick,NONE,Matt Patricia,NYJ,,assistant head coach / defensive coordinator,,defense,false,false,false,2000,,false,false
+2022,NO,Dennis Allen,Pete Carmichael Jr.,Pete Carmichael Jr.,NO,NO,defensive coordinator,quarterbacks coach,defense,false,false,true,2022,2009,true,false
+2022,NYG,Brian Daboll,Mike Kafka,Mike Kafka,BUF,KC,offensive coordinator,quarterbacks / passing game coordinator,offense,true,false,true,2022,2022,true,true
+2022,NYJ,Robert Saleh,Mike LaFleur,Mike LaFleur,SF,SF,defensive coordinator,passing game coordinator,defense,false,false,true,2021,2021,false,false
+2022,PHI,Nick Sirianni,Shane Steichen,Shane Steichen,IND,LAC,offensive coordinator,offensive coordinator,offense,true,false,true,2021,2021,false,false
+2022,PIT,Mike Tomlin,Matt Canada,Matt Canada,MIN,PIT,defensive coordinator,quarterbacks coach,defense,false,false,true,2007,2021,false,false
+2022,SEA,Pete Carroll,Shane Waldron,Shane Waldron,USC,LAR,head coach,passing game coordinator,defense,false,false,true,2010,2021,false,false
+2022,SF,Kyle Shanahan,NONE,Kyle Shanahan,ATL,,offensive coordinator,,offense,true,true,false,2017,,false,false
+2022,TB,Todd Bowles,Byron Leftwich,Byron Leftwich,TB,ARI,defensive coordinator,offensive coordinator,defense,false,false,true,2022,2019,true,false
+2022,TEN,Mike Vrabel,Todd Downing,Todd Downing,HOU,TEN,defensive coordinator,tight ends coach,defense,false,false,true,2018,2021,false,false
+2022,WAS,Ron Rivera,Scott Turner,Scott Turner,CAR,CAR,head coach,quarterbacks coach,defense,false,false,true,2020,2020,false,false
+2023,ARI,Jonathan Gannon,Drew Petzing,Drew Petzing,PHI,CLE,defensive coordinator,quarterbacks coach,defense,false,false,true,2023,2023,true,true
+2023,ATL,Arthur Smith,Dave Ragone,Arthur Smith,TEN,CHI,offensive coordinator,passing game coordinator / quarterbacks,offense,true,true,false,2021,2021,false,false
+2023,BAL,John Harbaugh,Todd Monken,Todd Monken,PHI,Georgia,defensive backs coach,offensive coordinator,special_teams,false,false,true,2008,2023,false,true
+2023,BUF,Sean McDermott,Ken Dorsey,Ken Dorsey,CAR,BUF,defensive coordinator,quarterbacks coach,defense,false,false,true,2017,2022,false,false
+2023,CAR,Frank Reich,Thomas Brown,Frank Reich,IND,LAR,head coach,assistant head coach / tight ends,offense,true,true,false,2023,2023,true,true
+2023,CHI,Matt Eberflus,Luke Getsy,Luke Getsy,IND,GB,defensive coordinator,quarterbacks / passing game coordinator,defense,false,false,true,2022,2022,false,false
+2023,CIN,Zac Taylor,Brian Callahan,Zac Taylor,LAR,LV,quarterbacks coach,quarterbacks coach,offense,true,true,false,2019,2019,false,false
+2023,CLE,Kevin Stefanski,Alex Van Pelt,Kevin Stefanski,MIN,CIN,offensive coordinator,quarterbacks coach,offense,true,true,false,2020,2020,false,false
+2023,DAL,Mike McCarthy,Brian Schottenheimer,Mike McCarthy,GB,DAL,head coach,consultant,offense,true,true,false,2020,2023,false,true
+2023,DEN,Sean Payton,Joe Lombardi,Sean Payton,NO,LAC,head coach,offensive coordinator,offense,true,true,false,2023,2023,true,true
+2023,DET,Dan Campbell,Ben Johnson,Ben Johnson,NO,DET,assistant head coach / tight ends,tight ends / passing game coordinator,ceo,false,false,true,2021,2022,false,false
+2023,GB,Matt LaFleur,Adam Stenavich,Adam Stenavich,TEN,GB,offensive coordinator,offensive line / run game coordinator,offense,true,false,true,2019,2022,false,false
+2023,HOU,DeMeco Ryans,Bobby Slowik,Bobby Slowik,SF,SF,defensive coordinator,passing game coordinator,defense,false,false,true,2023,2023,true,true
+2023,IND,Shane Steichen,Jim Bob Cooter,Shane Steichen,PHI,JAX,offensive coordinator,passing game coordinator,offense,true,true,false,2023,2023,true,true
+2023,JAX,Doug Pederson,Press Taylor,Press Taylor,PHI,IND,head coach,senior offensive assistant,offense,true,false,true,2022,2022,false,false
+2023,KC,Andy Reid,Matt Nagy,Andy Reid,PHI,KC,head coach,quarterbacks coach,offense,true,true,false,2013,2023,false,true
+2023,LAC,Brandon Staley,Kellen Moore,Kellen Moore,LAR,DAL,defensive coordinator,offensive coordinator,defense,false,false,true,2021,2023,false,true
+2023,LAR,Sean McVay,Mike LaFleur,Sean McVay,WAS,NYJ,offensive coordinator,offensive coordinator,offense,true,true,false,2017,2023,false,true
+2023,LV,Josh McDaniels,Mick Lombardi,Josh McDaniels,NE,NE,offensive coordinator,wide receivers coach,offense,true,true,false,2022,2022,false,false
+2023,MIA,Mike McDaniel,Frank Smith,Mike McDaniel,SF,LAC,offensive coordinator,run game coordinator / offensive line,offense,true,true,false,2022,2022,false,false
+2023,MIN,Kevin O'Connell,Wes Phillips,Kevin O'Connell,LAR,LAR,offensive coordinator,tight ends / passing game coordinator,offense,true,true,false,2022,2022,false,false
+2023,NE,Bill Belichick,Bill O'Brien,Bill O'Brien,NYJ,Alabama,assistant head coach / defensive coordinator,offensive coordinator,defense,false,false,true,2000,2023,false,true
+2023,NO,Dennis Allen,Pete Carmichael Jr.,Pete Carmichael Jr.,NO,NO,defensive coordinator,quarterbacks coach,defense,false,false,true,2022,2009,false,false
+2023,NYG,Brian Daboll,Mike Kafka,Mike Kafka,BUF,KC,offensive coordinator,quarterbacks / passing game coordinator,offense,true,false,true,2022,2022,false,false
+2023,NYJ,Robert Saleh,Nathaniel Hackett,Nathaniel Hackett,SF,DEN,defensive coordinator,head coach,defense,false,false,true,2021,2023,false,true
+2023,PHI,Nick Sirianni,Brian Johnson,Brian Johnson,IND,PHI,offensive coordinator,quarterbacks coach,offense,true,false,true,2021,2023,false,true
+2023,PIT,Mike Tomlin,Matt Canada,Matt Canada,MIN,PIT,defensive coordinator,quarterbacks coach,defense,false,false,true,2007,2021,false,false
+2023,SEA,Pete Carroll,Shane Waldron,Shane Waldron,USC,LAR,head coach,passing game coordinator,defense,false,false,true,2010,2021,false,false
+2023,SF,Kyle Shanahan,NONE,Kyle Shanahan,ATL,,offensive coordinator,,offense,true,true,false,2017,,false,false
+2023,TB,Todd Bowles,Dave Canales,Dave Canales,TB,SEA,defensive coordinator,quarterbacks coach,defense,false,false,true,2022,2023,false,true
+2023,TEN,Mike Vrabel,Tim Kelly,Tim Kelly,HOU,TEN,defensive coordinator,passing game coordinator,defense,false,false,true,2018,2023,false,true
+2023,WAS,Ron Rivera,Eric Bieniemy,Eric Bieniemy,CAR,KC,head coach,offensive coordinator,defense,false,false,true,2020,2023,false,true
+2024,ARI,Jonathan Gannon,Drew Petzing,Drew Petzing,PHI,CLE,defensive coordinator,quarterbacks coach,defense,false,false,true,2023,2023,false,false
+2024,ATL,Raheem Morris,Zac Robinson,Zac Robinson,LAR,LAR,defensive coordinator,quarterbacks / passing game coordinator,defense,false,false,true,2024,2024,true,true
+2024,BAL,John Harbaugh,Todd Monken,Todd Monken,PHI,Georgia,defensive backs coach,offensive coordinator,special_teams,false,false,true,2008,2023,false,false
+2024,BUF,Sean McDermott,Joe Brady,Joe Brady,CAR,BUF,defensive coordinator,quarterbacks coach / interim offensive coordinator,defense,false,false,true,2017,2023,false,true
+2024,CAR,Dave Canales,Brad Idzik,Dave Canales,TB,TB,offensive coordinator,wide receivers coach,offense,true,true,false,2024,2024,true,true
+2024,CHI,Matt Eberflus,Shane Waldron,Shane Waldron,IND,SEA,defensive coordinator,offensive coordinator,defense,false,false,true,2022,2024,false,true
+2024,CIN,Zac Taylor,Dan Pitcher,Zac Taylor,LAR,CIN,quarterbacks coach,quarterbacks coach,offense,true,true,false,2019,2024,false,true
+2024,CLE,Kevin Stefanski,Ken Dorsey,Kevin Stefanski,MIN,BUF,offensive coordinator,offensive coordinator,offense,true,true,false,2020,2024,false,true
+2024,DAL,Mike McCarthy,Brian Schottenheimer,Mike McCarthy,GB,DAL,head coach,consultant,offense,true,true,false,2020,2023,false,false
+2024,DEN,Sean Payton,Joe Lombardi,Sean Payton,NO,LAC,head coach,offensive coordinator,offense,true,true,false,2023,2023,false,false
+2024,DET,Dan Campbell,Ben Johnson,Ben Johnson,NO,DET,assistant head coach / tight ends,tight ends / passing game coordinator,ceo,false,false,true,2021,2022,false,false
+2024,GB,Matt LaFleur,Adam Stenavich,Matt LaFleur,TEN,GB,offensive coordinator,offensive line / run game coordinator,offense,true,true,false,2019,2022,false,false
+2024,HOU,DeMeco Ryans,Bobby Slowik,Bobby Slowik,SF,SF,defensive coordinator,passing game coordinator,defense,false,false,true,2023,2023,false,false
+2024,IND,Shane Steichen,Jim Bob Cooter,Shane Steichen,PHI,JAX,offensive coordinator,passing game coordinator,offense,true,true,false,2023,2023,false,false
+2024,JAX,Doug Pederson,Press Taylor,Press Taylor,PHI,IND,head coach,senior offensive assistant,offense,true,false,true,2022,2022,false,false
+2024,KC,Andy Reid,Matt Nagy,Andy Reid,PHI,KC,head coach,quarterbacks coach,offense,true,true,false,2013,2023,false,false
+2024,LAC,Jim Harbaugh,Greg Roman,Greg Roman,Michigan,BAL,head coach,offensive coordinator,offense,true,false,true,2024,2024,true,true
+2024,LAR,Sean McVay,Mike LaFleur,Sean McVay,WAS,NYJ,offensive coordinator,offensive coordinator,offense,true,true,false,2017,2023,false,false
+2024,LV,Antonio Pierce,Luke Getsy,Luke Getsy,LV,CHI,linebackers coach / interim head coach,offensive coordinator,ceo,false,false,true,2023,2024,true,true
+2024,MIA,Mike McDaniel,Frank Smith,Mike McDaniel,SF,LAC,offensive coordinator,run game coordinator / offensive line,offense,true,true,false,2022,2022,false,false
+2024,MIN,Kevin O'Connell,Wes Phillips,Kevin O'Connell,LAR,LAR,offensive coordinator,tight ends / passing game coordinator,offense,true,true,false,2022,2022,false,false
+2024,NE,Jerod Mayo,Alex Van Pelt,Alex Van Pelt,NE,CLE,inside linebackers coach,offensive coordinator,defense,false,false,true,2024,2024,true,true
+2024,NO,Dennis Allen,Klint Kubiak,Klint Kubiak,NO,SF,defensive coordinator,passing game coordinator,defense,false,false,true,2022,2024,false,true
+2024,NYG,Brian Daboll,Mike Kafka,Brian Daboll,BUF,KC,offensive coordinator,quarterbacks / passing game coordinator,offense,true,true,false,2022,2022,false,false
+2024,NYJ,Robert Saleh,Nathaniel Hackett,Nathaniel Hackett,SF,DEN,defensive coordinator,head coach,defense,false,false,true,2021,2023,false,false
+2024,PHI,Nick Sirianni,Kellen Moore,Kellen Moore,IND,LAC,offensive coordinator,offensive coordinator,offense,true,false,true,2021,2024,false,true
+2024,PIT,Mike Tomlin,Arthur Smith,Arthur Smith,MIN,ATL,defensive coordinator,head coach,defense,false,false,true,2007,2024,false,true
+2024,SEA,Mike Macdonald,Ryan Grubb,Ryan Grubb,BAL,Washington,defensive coordinator,offensive coordinator,defense,false,false,true,2024,2024,true,true
+2024,SF,Kyle Shanahan,NONE,Kyle Shanahan,ATL,,offensive coordinator,,offense,true,true,false,2017,,false,false
+2024,TB,Todd Bowles,Liam Coen,Liam Coen,TB,Kentucky,defensive coordinator,offensive coordinator,defense,false,false,true,2022,2024,false,true
+2024,TEN,Brian Callahan,Nick Holz,Brian Callahan,CIN,JAX,offensive coordinator,passing game coordinator,offense,true,true,false,2024,2024,true,true
+2024,WAS,Dan Quinn,Kliff Kingsbury,Kliff Kingsbury,DAL,USC,defensive coordinator,senior offensive analyst,defense,false,false,true,2024,2024,true,true

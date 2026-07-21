@@ -123,6 +123,7 @@ def is_target_league(league):
         and league.get("draft_id") is not None
         and settings.get("best_ball") == 0
         and settings.get("type") == 0
+        and settings.get("start_week") == 1
         and rec is not None
         # and rec >= 0.5
         and rec == 1.0
