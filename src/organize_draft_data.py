@@ -4,21 +4,20 @@ from collections import defaultdict
 import numpy as np
 import pandas as pd
 
-from data_types import AllPlayers, Draft, DraftPick, PlayerId, PlayerImpact
+from data_types import Draft, DraftPick, PlayerId, PlayerImpact
 from path import (
     ADP_CSV_PATH,
     DRAFTS_METADATA_PATH,
-    NFL_PLAYERS_JSON_PATH,
     QUALIFYING_DRAFT_IDS_PATH,
 )
-from util import load_ids, normalize_player_name, sleeper_get
+from util import normalize_player_name, sleeper_get
 
 
 def main():
     draft_info()
 
 
-def draft_impact(draft: Draft, all_players: AllPlayers) -> Draft:
+def draft_impact(draft: Draft) -> Draft:
     player_impact: PlayerImpact = defaultdict(int)
     team_size = 7
 
@@ -40,31 +39,25 @@ def draft_impact(draft: Draft, all_players: AllPlayers) -> Draft:
             continue
         print(f"https://api.sleeper.app/v1/league/{draft['league_id']}/matchups/{i}")
         for matchup in matchups:
-            if matchup["players_points"] == {}:
-                continue
             print(matchup["players_points"])
             roster = matchup["roster_id"]
-            points = matchup["points"]
-            for i, pos in enumerate(["DEF", "K"]):
-                points -= (
-                    matchup["starters_points"][-i - 1]
-                    if matchup["starters"][-i - 1] in all_players
-                    and all_players[matchup["starters"][-i - 1]]["position"] == pos
-                    else 0
-                )
             roster_list = [
                 pick["player_id"]
                 for pick in draft["picks"]
                 if pick["roster_id"] == roster
             ]
             draft_starter_count = 0
-            for starter in matchup["starters"]:
+            points = 0
+            for starter, starter_point in zip(
+                matchup["starters"][:7], matchup["starters_points"][:7]
+            ):
                 if starter in roster_list:
                     # list of 12 teams
-                    starter_points[roster - 1] += matchup["players_points"][starter]
+                    starter_points[roster - 1] += starter_point
                     player_roster[starter] = roster
                     draft_starter_count += 1
-                    player_impact[starter] += matchup["players_points"][starter]
+                    player_impact[starter] += starter_point
+                    points += starter_point
             start_ratio[roster - 1] = draft_starter_count / team_size
             total_points[roster - 1] += points
             weekly_team_points[roster - 1] = points
@@ -92,12 +85,10 @@ def draft_impact(draft: Draft, all_players: AllPlayers) -> Draft:
 
 
 def draft_info():
-    good_drafts = load_ids(QUALIFYING_DRAFT_IDS_PATH)
-    with NFL_PLAYERS_JSON_PATH.open(encoding="utf-8") as f:
-        all_players: AllPlayers = json.load(f)
+    good_drafts = QUALIFYING_DRAFT_IDS_PATH.read_text().splitlines()
     draft_list: list[Draft] = []
     adp_csv_original = pd.read_csv(ADP_CSV_PATH, dtype={"player_id": "string"})
-    for draft in list(good_drafts)[:100]:
+    for draft in good_drafts[:100]:
         response = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}")
         if not response or type(response) is not dict:
             continue
@@ -147,7 +138,7 @@ def draft_info():
                 "pos_rank": (pos_rank),
             }
             draft_json["picks"].append(pick_json)
-        draft_list.append(draft_impact(draft_json, all_players))
+        draft_list.append(draft_impact(draft_json))
     DRAFTS_METADATA_PATH.write_text(json.dumps(draft_list, indent=2))
 
 
