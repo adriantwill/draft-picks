@@ -62,6 +62,9 @@ def draft_impact(draft: Draft) -> Draft:
             start_ratio[roster - 1] = draft_starter_count / team_size
             total_points[roster - 1] += points
             weekly_team_points[roster - 1] = points
+        if np.std(starter_points) == 0 or np.std(weekly_team_points) == 0:
+            num_weeks -= 1
+            continue
         week_z = (weekly_team_points - np.mean(weekly_team_points)) / np.std(
             weekly_team_points
         )
