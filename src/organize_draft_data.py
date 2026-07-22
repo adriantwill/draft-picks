@@ -91,8 +91,15 @@ def draft_impact(draft: Draft) -> Draft:
 def draft_info():
     good_drafts = QUALIFYING_DRAFT_IDS_PATH.read_text().splitlines()
     draft_list: list[Draft] = []
+    with open(DRAFTS_METADATA_PATH,"r") as f:
+        draft_list = json.load(f)
     adp_csv_original = pd.read_csv(ADP_CSV_PATH, dtype={"player_id": "string"})
-    for draft in good_drafts[:100]:
+    seen_drafts = set(draft['draft_id'] for draft in draft_list)
+    print(len(seen_drafts))
+    for draft in good_drafts:
+        if draft in seen_drafts:
+            print('draft seen')
+            continue
         response = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}")
         if not response or type(response) is not dict:
             continue
@@ -143,7 +150,7 @@ def draft_info():
             }
             draft_json["picks"].append(pick_json)
         draft_list.append(draft_impact(draft_json))
-    DRAFTS_METADATA_PATH.write_text(json.dumps(draft_list, indent=2))
+        DRAFTS_METADATA_PATH.write_text(json.dumps(draft_list, indent=2))
 
 
 if __name__ == "__main__":
