@@ -36,6 +36,7 @@ def draft_impact(draft: Draft) -> Draft:
             f"https://api.sleeper.app/v1/league/{draft['league_id']}/matchups/{i}"
         )
         if not matchups or type(matchups) is not list:
+            num_weeks -= 1
             continue
         print(f"https://api.sleeper.app/v1/league/{draft['league_id']}/matchups/{i}")
         for matchup in matchups:
