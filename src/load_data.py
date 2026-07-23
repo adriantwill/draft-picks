@@ -74,8 +74,16 @@ def bfs_leagues():
                         continue
                     req_count += 1
                     if draft and is_good_draft(draft, league):
-                        good_drafts.add(draft_id)
-                        print(draft_id)
+                        week_one_matchups = sleeper_get(
+                            f"https://api.sleeper.app/v1/league/{league_id}/matchups/1"
+                        )
+                        if week_one_matchups is None:
+                            bad_league_response = True
+                            continue
+                        req_count += 1
+                        if week_one_matchups and week_one_matchups[0].get("players"):
+                            good_drafts.add(draft_id)
+                            print(draft_id)
                     users = sleeper_get(
                         f"https://api.sleeper.app/v1/league/{league_id}/users"
                     )
@@ -122,6 +130,7 @@ def is_target_league(league):
         and league.get("status") in {"in_season", "complete"}
         and league.get("draft_id") is not None
         and settings.get("best_ball") == 0
+        and settings.get("last_scored_leg") >= 16
         and settings.get("type") == 0
         and settings.get("start_week") == 1
         and rec is not None
@@ -137,6 +146,7 @@ def is_target_league(league):
         and pos_count["DEF"] <= 1
         # and pos_count["FLEX"] <= 2
         and pos_count["FLEX"] == 1
+        and pos_count["WRRB_FLEX"] == 0
         and "SUPER_FLEX" not in pos_count
         and idp_positions.isdisjoint(pos_count)
         and num_teams is not None
@@ -166,8 +176,8 @@ def is_good_draft(draft, league):
         and settings.get("slots_wr") == 2
         and settings.get("slots_te") == 1
         and flex is not None
-        and flex >= 1
-        and flex <= 2
+        and flex == 1
+        and settings.get("slots_wrrb_flex", 0) == 0
         and settings.get("slots_super_flex", 0) == 0
     )
 

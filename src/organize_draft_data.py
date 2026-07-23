@@ -91,22 +91,23 @@ def draft_impact(draft: Draft) -> Draft:
 def draft_info():
     good_drafts = QUALIFYING_DRAFT_IDS_PATH.read_text().splitlines()
     draft_list: list[Draft] = []
-    with open(DRAFTS_METADATA_PATH,"r") as f:
+    with open(DRAFTS_METADATA_PATH, "r") as f:
         draft_list = json.load(f)
     adp_csv_original = pd.read_csv(ADP_CSV_PATH, dtype={"player_id": "string"})
-    seen_drafts = set(draft['draft_id'] for draft in draft_list)
+    seen_drafts = set(draft["draft_id"] for draft in draft_list)
     print(len(seen_drafts))
     for draft in good_drafts:
         if draft in seen_drafts:
-            print('draft seen')
+            print("draft seen")
             continue
         response = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}")
+        settings = response.get("settings")
         if not response or type(response) is not dict:
             continue
         draft_json: Draft = {
             "league_id": response.get("league_id"),
             "draft_id": response.get("draft_id"),
-            "teams": response.get("settings", {}).get("teams"),
+            "teams": settings.get("teams"),
             "season": response.get("season"),
             "picks": [],
             "total_weekly_z": [],
@@ -120,7 +121,11 @@ def draft_info():
         adp_csv = adp_csv.sort_values("AVG").reset_index(drop=True)
         adp_csv["pos_rank"] = adp_csv.groupby("position").cumcount() + 1
         picks = sleeper_get(f"https://api.sleeper.app/v1/draft/{draft}/picks")
-        if not picks or type(picks) is not list:
+        if (
+            not picks
+            or type(picks) is not list
+            or len(picks) != settings.get("teams") * settings.get("rounds")
+        ):
             continue
         for pick in picks:
             metadata = pick.get("metadata") or {}
